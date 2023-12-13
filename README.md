@@ -19,6 +19,17 @@
 
 - **Pure Python**: It is written in pure Python, making it easy to install and use without any dependency.
 
+<span id="contents"></span>
+
+## Table of Contents :
+* [Installation](#installation)
+* [Rule & Evaluation basics](#basics)
+* [Rule builder](#builder)
+* [Rule Engine](#engine)
+* [Tests](#tests)
+
+
+<span id="installation"></span>
 
 ## Installation
 You can install `py-rules` using pip:
@@ -26,14 +37,6 @@ You can install `py-rules` using pip:
 ```bash
 pip install py-rules
 ```
-
-<span id="contents"></span>
-
-## Table of Contents :
-* [Rule & Evaluation basics](#basics)
-* [Rule builder](#builder)
-* [Rule Engine](#engine)
-* [Tests](#tests)
 
 
 <span id="basics"></span>
