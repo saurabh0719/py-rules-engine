@@ -36,7 +36,7 @@
 You can install `py-rules-engine` using pip:
 
 ```bash
-pip install py-rules
+pip install py-rules-engine
 ```
 
 
