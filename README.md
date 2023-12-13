@@ -17,7 +17,7 @@
 
 - **Rule Evaluation**: It provides a rule engine for evaluating rules in a given context.
 
-- **Pure Python**: It is written in pure Python, making it easy to install and use without any dependency.
+- **0 dependencies**: It is written in pure Python, making it easy to install and use without any dependency.
 
 <span id="contents"></span>
 
@@ -42,7 +42,7 @@ pip install py-rules-engine
 
 <span id="basics"></span>
 
-### Rule & Evaluation basics
+## Rule & Evaluation basics
 
 This rule-engine follows the `IF-THEN-ELSE` pattern of rules. Rules can be nested within one another.
 
@@ -231,7 +231,7 @@ Here's the equivalent rule in JSON format:
 
 <span id="engine"></span>
 
-### Rule Engine
+## Rule Engine
 
 The `RuleEngine` class is used to evaluate a parsed rule. It takes a `Rule` object and a context (a dictionary) as input. The context is used to evaluate the conditions in the rule.
 
@@ -305,7 +305,7 @@ In this example, the first rule checks if the temperature is greater than 30, an
 
 <span id="tests"></span>
 
-### Tests
+## Tests
 
 Install all dev dependencies
 
@@ -322,7 +322,7 @@ python -m unittest -v
 
 <span id="todo"></span>
 
-### To do
+## To do
 
 - Pass a global config dictionary from `RuleEngine` to control the following -
     - Date parsing functions
