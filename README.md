@@ -3,7 +3,7 @@
 
 ## Introduction
 
-`py-rules` is a simple, yet powerful rules engine written in pure Python. It allows you to define complex logical conditions and actions, either via a json file or through pythonic functions.
+`py-rules-engine` is a simple, yet powerful rules engine written in pure Python. It allows you to define complex logical conditions and actions, either via a json file or through pythonic functions.
 
 - **Complex Logical Conditions**: It allows you to define complex logical conditions using and, or, and not operations.
 
@@ -33,7 +33,7 @@
 <span id="installation"></span>
 
 ## Installation
-You can install `py-rules` using pip:
+You can install `py-rules-engine` using pip:
 
 ```bash
 pip install py-rules
