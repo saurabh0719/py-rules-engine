@@ -1,26 +1,22 @@
-from .builder import ConditionBuilder, AndCondition, OrCondition, ResultBuilder, RuleBuilder
+from .builder import Condition, Result, Rule
 from .condition import RuleCondition
 from .engine import RuleEngine
 from .errors import InvalidRuleError, InvalidRuleConditionError, InvalidRuleExpressionError, InvalidRuleValueError
 from .expression import RuleExpression
 from .utils import load_json_rules
-from .validator import RuleValidator
 from .value import RuleValue
 
 __all__ = [
-    'AndCondition',
-    'ConditionBuilder',
+    'Condition',
     'InvalidRuleConditionError',
     'InvalidRuleError',
     'InvalidRuleExpressionError',
     'InvalidRuleValueError',
-    'OrCondition',
-    'ResultBuilder',
-    'RuleBuilder',
+    'Result',
+    'Rule',
     'RuleCondition',
     'RuleEngine',
     'RuleExpression',
-    'RuleValidator',
     'RuleValue',
-    'load_json_rules',
+    'load_json_rules'
 ]

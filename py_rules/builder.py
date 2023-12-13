@@ -1,94 +1,77 @@
 """
 Example usage:
 
-# Driver code
-condition1 = ConditionBuilder("number", "is_in", [1, 2, 3])
-condition2 = ConditionBuilder("number", "=", 1)
-condition3 = ConditionBuilder("number", "=", 2)
+condition = Condition('number', 'is_in', [1, 2, 3]) & Condition('number', '=', 1) & Condition('number', '=', 1) | Condition('number', '=', 2)
+result = Result().add('xyz', 'str', 'Condition met').add('result', 'variable', 'xyz')
+rule = Rule('Complex rule').If(condition).Then(result).Else(result)
 
-or_condition = OrCondition(condition2, condition3)
-and_condition = AndCondition(condition1, or_condition)
-
-result1 = (ResultBuilder()
-           .add('xyz', 'str', 'Condition met')
-           .add('result', 'variable', 'xyz'))
-
-result2 = (ResultBuilder()
-           .add('xyz', 'str', 'Nested condition met')
-           .add('result', 'variable', 'xyz'))
-
-
-or_condition2 = OrCondition(condition2, condition3, AndCondition(condition2, condition3))
-
-nested_rule = (RuleBuilder("Nested rule")
-               .if_condition(or_condition2)
-               .then_action(result2)
-               .else_action({'result': 'Nested condition not met'}))
-
-rule = (RuleBuilder("Complex rule")
-        .if_condition(and_condition)
-        .then_action(result1)
-        .else_action(nested_rule)
-        .build())
-
-print(rule)
-
+print(rule.to_dict())
 """
 
-class ConditionBuilder:
-    def __init__(self, variable, operator, value):
-        self.condition = {
-            'variable': variable,
-            'operator': operator,
-            'value': self._build_value(value)
-        }
+class Condition:
+    """
+    A class to represent a condition.
+    """
+
+    def __init__(self, variable=None, operator=None, value=None, condition=None):
+        """
+        Initialize Condition with either a condition dictionary or variable, operator, and value.
+        """
+        if condition:
+            self.condition = condition
+        else:
+            self.condition = {
+                'condition': {
+                    'variable': variable,
+                    'operator': operator,
+                    'value': self._build_value(value)
+                }
+            }
 
     def _build_value(self, value):
+        """
+        Build a dictionary representation of a value.
+        """
         if isinstance(value, list):
-            return {
-                'type': 'list',
-                'value': [self._build_value(v) for v in value]
-            }
+            return {'type': 'list', 'value': [self._build_value(v) for v in value]}
         elif isinstance(value, dict):
-            return {
-                'type': 'dict',
-                'value': {k: self._build_value(v) for k, v in value.items()}
-            }
+            return {'type': 'dict', 'value': {k: self._build_value(v) for k, v in value.items()}}
         else:
-            return {
-                'type': type(value).__name__,
-                'value': value
-            }
+            return {'type': type(value).__name__, 'value': value}
+        
+    def __str__(self) -> str:
+        return str(self.condition)
 
-    def build(self):
-        return {'condition': self.condition}
-    
+    def __and__(self, other):
+        """
+        Combine this condition and another condition with 'and'.
+        """
+        new_condition = {'and': self._get_conditions('and', other)}
+        return Condition(condition=new_condition)
 
-class AndCondition:
-    def __init__(self, *conditions):
-        self.conditions = conditions
+    def __or__(self, other):
+        """
+        Combine this condition and another condition with 'or'.
+        """
+        new_condition = {'or': self._get_conditions('or', other)}
+        return Condition(condition=new_condition)
 
-    def build(self):
-        result = {"and": []}
-        for condition in self.conditions:
-            result["and"].append(condition.build())
-        return result
+    def _get_conditions(self, operator, other):
+        """
+        Get a list of conditions combined with a specified operator.
+        """
+        return self.condition.get(operator, [self.condition]) + other.condition.get(operator, [other.condition])
+
+    def to_dict(self):
+        return self.condition
 
 
-class OrCondition:
-    def __init__(self, *conditions):
-        self.conditions = conditions
-
-    def build(self):
-        result = {"or": []}
-        for condition in self.conditions:
-            result["or"].append(condition.build())
-        return result
-    
-
-class ResultBuilder:
+class Result:
     def __init__(self):
         self.result = {}
+
+    def __str__(self):
+        return str(self.to_dict())
 
     def add(self, key, type, value):
         self.result[key] = {
@@ -96,34 +79,66 @@ class ResultBuilder:
             'value': value
         }
         return self
+    
+    def to_dict(self):
+        return {"result": self.result}
 
-    def build(self):
-        return {'result': self.result}
 
+class Rule:
+    """
+    A class to represent a rule.
+    """
 
-class RuleBuilder:
-    def __init__(self, rule_name):
-        self.rule = {'rule': rule_name}
+    def __init__(self, rule):
+        """
+        Initialize Rule with a rule name.
+        """
+        self.rule = {
+            'rule': rule
+        }
+        self.current_operator = "__init__"
 
-    def if_condition(self, condition):
-        self.rule['if'] = condition.build()
-        return self
+    def __str__(self):
+        return str(self.rule)
 
-    def then_action(self, action):
-        if isinstance(action, ResultBuilder):
-            self.rule['then'] = action.build()
+    def If(self, condition: Condition):
+        """
+        Set the 'if' condition of the rule.
+        """
+        if self.current_operator == "__init__":
+            self.rule['if'] = condition.to_dict()
         else:
-            self.rule['then'] = action
+            raise Exception('If must be the first condition in the rule')
+        
+        self.current_operator = "If"
         return self
 
-    def else_action(self, action):
-        if isinstance(action, RuleBuilder):
-            self.rule['else'] = action.build()
-        elif isinstance(action, ResultBuilder):
-            self.rule['else'] = action.build()
+    def Then(self, result: Result):
+        """
+        Set the 'then' result of the rule.
+        """
+        if self.current_operator == "If":
+            self.rule['then'] = result.to_dict()
         else:
-            self.rule['else'] = action
+            raise Exception('Then must be after If in the rule')
+        
+        self.current_operator = "Then"
         return self
 
-    def build(self):
+    def Else(self, obj):
+        """
+        Set the 'else' result of the rule.
+        """
+        if self.current_operator == "Then":
+            if isinstance(obj, (Rule, Result)):
+                self.rule['else'] = obj.to_dict()
+            else:
+                raise Exception('Else must be a Rule or Result type object')
+        else:
+            raise Exception('Else must be after Then in the rule')
+        
+        self.current_operator = "Else"
+        return self
+    
+    def to_dict(self):
         return self.rule

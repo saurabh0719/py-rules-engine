@@ -1,6 +1,6 @@
-from rules.value import RuleValue
-from rules.expression import RuleExpression
-from rules.exceptions import InvalidRuleConditionError
+from .value import RuleValue
+from .expression import RuleExpression
+from .errors import InvalidRuleConditionError
 
 
 class RuleCondition:
@@ -16,11 +16,10 @@ class RuleCondition:
             condition (dict): The condition object, which should have 'type', 'operator', 'operand', and 'value' properties.
         """
         self.context = context
-        self.type = condition.get('type')
         self.operator = condition.get('operator')
         self.variable = condition.get('variable')
         self.value = condition.get('value')
-        if not self.type or not self.operator or not self.variable:
+        if not self.operator or not self.variable:
             raise InvalidRuleConditionError('Missing type in condition')
 
     def evaluate(self) -> bool:

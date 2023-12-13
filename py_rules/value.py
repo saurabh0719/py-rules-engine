@@ -1,5 +1,7 @@
 from datetime import datetime
-from rules.exceptions import InvalidRuleValueError
+
+from .constants import Types
+from .errors import InvalidRuleValueError
 
 class RuleValue:
     """
@@ -18,6 +20,25 @@ class RuleValue:
         self.value = value.get('value')
         if not self.type:
             raise InvalidRuleValueError('Missing type in value')
+        
+        self.type_map = {
+            Types.BOOLEAN: bool,
+            Types.STRING: str,
+            Types.INTEGER: int,
+            Types.FLOAT: float,
+            Types.DATE: lambda x: datetime.strptime(x, '%Y-%m-%d').date(),
+            Types.DATETIME: lambda x: datetime.strptime(x, '%Y-%m-%dT%H:%M:%S'),
+            Types.LIST: self.parse_list,
+            Types.DICTIONARY: self.parse_dict,
+            Types.NONETYPE: lambda x: None,
+            Types.VARIABLE: self.context.get
+        }
+
+    def _parse_list(self, value):
+        return [RuleValue(self.context, item).get_value() for item in value]
+
+    def _parse_dict(self, value):
+        return {key: RuleValue(self.context, value).get_value() for key, value in value.items()}
 
     def get_value(self) -> any:
         """
@@ -26,25 +47,8 @@ class RuleValue:
         Returns:
             The parsed value.
         """
-        if self.type == 'bool':
-            return bool(self.value)
-        elif self.type == 'str':
-            return str(self.value)
-        elif self.type == 'int':
-            return int(self.value)
-        elif self.type == 'float':
-            return float(self.value)
-        elif self.type == 'date':
-            return datetime.strptime(self.value, '%Y-%m-%d').date()
-        elif self.type == 'datetime':
-            return datetime.strptime(self.value, '%Y-%m-%dT%H:%M:%S')
-        elif self.type == 'list' and isinstance(self.value, list):
-            return [RuleValue(item).get_value() for item in self.value]
-        elif self.type == 'dict' and isinstance(self.value, dict):
-            return {key: RuleValue(value).get_value() for key, value in self.value.items()}
-        elif self.type == 'NoneType' and self.value is None:
-            return None
-        elif self.type == 'variable':
-            return self.context.get(self.value)
+        parse_func = self.type_map.get(self.type)
+        if parse_func:
+            return parse_func(self.value)
         else:
             raise InvalidRuleValueError(f'Invalid type: {self.type}')

@@ -1,5 +1,6 @@
 from .value import RuleValue
-from .exceptions import InvalidRuleExpressionError, InvalidRuleValueError
+from .errors import InvalidRuleExpressionError, InvalidRuleValueError
+from .constants import Operators
 
 
 class RuleExpression:
@@ -21,16 +22,15 @@ class RuleExpression:
         self.right_value = right_value
 
         self.operators = {
-            '==': self.equal,
-            '=': self.equal,
-            '<': self.less_than,
-            '>': self.greater_than,
-            '<=': self.less_than_equal,
-            '>=': self.greater_than_equal,
-            '!=': self.not_equal,
-            'between': self.between,
-            'in': self.in_,
-            'not in': self.not_in,
+            Operators.EQUAL: self.equal,
+            Operators.LESS_THAN: self.less_than,
+            Operators.GREATER_THAN: self.greater_than,
+            Operators.LESS_THAN_OR_EQUAL: self.less_than_equal,
+            Operators.GREATER_THAN_OR_EQUAL: self.greater_than_equal,
+            Operators.NOT_EQUAL: self.not_equal,
+            Operators.BETWEEN: self.between,
+            Operators.IN: self.in_,
+            Operators.NOT_IN: self.not_in,
         }
 
     def evaluate(self) -> bool:
@@ -44,12 +44,11 @@ class RuleExpression:
             left_value = self.left_value.get_value()
             right_value = self.right_value.get_value()
 
-            if self.operator != '==' and self.operator != '=':
+            if self.operator != '==':
                 if not isinstance(left_value, type(right_value)):
                     raise InvalidRuleValueError('Values are not comparable')
 
             return self.operators[self.operator](left_value, right_value)
-
         except KeyError:
             raise InvalidRuleExpressionError(
                 f'Invalid expression: {self.left_value} {self.operator} {self.right_value}')

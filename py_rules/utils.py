@@ -1,5 +1,4 @@
 import json
-from .validator import RuleValidator
 
 def load_json_rules(json_file) -> dict:
     """
@@ -7,6 +6,4 @@ def load_json_rules(json_file) -> dict:
     """
     with open(json_file) as f:
         rules = json.load(f)
-
-    RuleValidator(rules)
     return rules
