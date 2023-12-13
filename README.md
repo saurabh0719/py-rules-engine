@@ -44,6 +44,22 @@ pip install py-rules-engine
 
 ### Rule & Evaluation basics
 
+This rule-engine follows the `IF-THEN-ELSE` pattern of rules. Rules can be nested within one another.
+
+- Rules can be built using the python builder or directly in JSON as a JSON file.
+
+- Rules can be nested within one another
+
+- A single Rule can be composed of `multiple conditions`
+
+See the `examples/rule_json/` directory for some JSON rule files.
+
+
+All the `Rule`(s) are evaluated against a `context` dictionary. More on that later.
+
+
+Every `Rule` object contains the following
+
 - `rule_metadata`: This section contains metadata about the rule.
 
   - `__version__`: The version of the rule.
