@@ -9,6 +9,7 @@ print(rule.to_dict())
 """
 from py_rules.constants import Operators
 from py_rules.errors import InvalidRuleConditionError
+from py_rules.utils import save_dict_to_json
 
 
 class Condition:
@@ -148,3 +149,7 @@ class Rule:
     
     def to_dict(self):
         return self.rule
+    
+    def to_file(self, filename):
+        save_dict_to_json(self.rule, filename)
+

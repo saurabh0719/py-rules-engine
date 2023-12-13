@@ -3,7 +3,7 @@ from .condition import RuleCondition
 from .engine import RuleEngine
 from .errors import InvalidRuleError, InvalidRuleConditionError, InvalidRuleExpressionError, InvalidRuleValueError
 from .expression import RuleExpression
-from .utils import load_json_rules
+from .utils import load_from_json
 from .value import RuleValue
 
 __all__ = [
@@ -18,5 +18,5 @@ __all__ = [
     'RuleEngine',
     'RuleExpression',
     'RuleValue',
-    'load_json_rules'
+    'load_from_json'
 ]

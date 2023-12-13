@@ -1,4 +1,4 @@
-class BaseConstant:
+class Constants:
 
     @classmethod
     def list_all(cls):
@@ -8,7 +8,7 @@ class BaseConstant:
         ]
 
 
-class Types(BaseConstant):
+class Types(Constants):
     BOOLEAN = "bool"
     INTEGER = "int"
     FLOAT = "float"
@@ -21,8 +21,9 @@ class Types(BaseConstant):
     VARIABLE = "variable"
 
 
-class Operators(BaseConstant):
-    EQUAL = "=="
+class Operators(Constants):
+    EQUAL = "="
+    DOUBLE_EQUAL = "=="
     NOT_EQUAL = "!="
     LESS_THAN = "<"
     LESS_THAN_OR_EQUAL = "<="

@@ -23,6 +23,7 @@ class RuleExpression:
 
         self.operator_to_handler_map = {
             Operators.EQUAL: self.equal,
+            Operators.DOUBLE_EQUAL: self.equal,
             Operators.LESS_THAN: self.less_than,
             Operators.GREATER_THAN: self.greater_than,
             Operators.LESS_THAN_OR_EQUAL: self.less_than_equal,

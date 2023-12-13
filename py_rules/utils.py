@@ -1,9 +1,13 @@
 import json
 
-def load_json_rules(json_file) -> dict:
+def load_from_json(file_path) -> dict:
     """
     Load a rules from a JSON file.
     """
-    with open(json_file) as f:
-        rules = json.load(f)
-    return rules
+    with open(file_path) as f:
+        data = json.load(f)
+    return data
+
+def save_dict_to_json(file_path, data: dict):
+    with open(file_path, 'w') as f:
+        json.dump(data, f)
