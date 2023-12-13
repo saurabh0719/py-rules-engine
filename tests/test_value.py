@@ -20,55 +20,32 @@ class TestRuleValue(unittest.TestCase):
             RuleValue({'type': 'invalid', 'value': 'test'}, self.context)
 
     def test_boolean(self):
-        rule_value = RuleValue({
-            'type': Types.BOOLEAN,
-            'value': 'True'
-        }, self.context)
+        rule_value = RuleValue({'type': Types.BOOLEAN, 'value': 'True'}, self.context)
         self.assertEqual(rule_value.get_value(), True)
 
     def test_string(self):
-        rule_value = RuleValue({
-            'type': Types.STRING,
-            'value': 'test'
-        }, self.context)
+        rule_value = RuleValue({'type': Types.STRING, 'value': 'test'}, self.context)
         self.assertEqual(rule_value.get_value(), 'test')
 
     def test_integer(self):
-        rule_value = RuleValue({
-            'type': Types.INTEGER,
-            'value': '1'
-        }, self.context)
+        rule_value = RuleValue({'type': Types.INTEGER, 'value': '1'}, self.context)
         self.assertEqual(rule_value.get_value(), 1)
 
     def test_float(self):
-        rule_value = RuleValue({
-            'type': Types.FLOAT,
-            'value': '1.1'
-        }, self.context)
+        rule_value = RuleValue({'type': Types.FLOAT, 'value': '1.1'}, self.context)
         self.assertEqual(rule_value.get_value(), 1.1)
 
     def test_date(self):
-        rule_value = RuleValue({
-            'type': Types.DATE,
-            'value': '2022-01-01'
-        }, self.context)
-        self.assertEqual(rule_value.get_value(),
-                         datetime.strptime('2022-01-01', '%Y-%m-%d').date())
+        rule_value = RuleValue({'type': Types.DATE, 'value': '2022-01-01'}, self.context)
+        self.assertEqual(rule_value.get_value(), datetime.strptime('2022-01-01', '%Y-%m-%d').date())
 
     def test_datetime(self):
-        rule_value = RuleValue(
-            {
-                'type': Types.DATETIME,
-                'value': '2022-01-01T12:00:00'
-            }, self.context)
-        self.assertEqual(
-            rule_value.get_value(),
-            datetime.strptime('2022-01-01T12:00:00', '%Y-%m-%dT%H:%M:%S'))
+        rule_value = RuleValue({'type': Types.DATETIME, 'value': '2022-01-01T12:00:00'}, self.context)
+        self.assertEqual(rule_value.get_value(), datetime.strptime('2022-01-01T12:00:00', '%Y-%m-%dT%H:%M:%S'))
 
     def test_list(self):
         data = {
-            'type':
-            Types.LIST,
+            'type': Types.LIST,
             'value': [{
                 'type': Types.STRING,
                 'value': 'one'
@@ -95,21 +72,12 @@ class TestRuleValue(unittest.TestCase):
             }
         }
         rule_value = RuleValue(data, self.context)
-        self.assertEqual(rule_value.get_value(), {
-            'key': 'one',
-            'value': 'two'
-        })
+        self.assertEqual(rule_value.get_value(), {'key': 'one', 'value': 'two'})
 
     def test_none(self):
-        rule_value = RuleValue({
-            'type': Types.NONETYPE,
-            'value': 'None'
-        }, self.context)
+        rule_value = RuleValue({'type': Types.NONETYPE, 'value': 'None'}, self.context)
         self.assertEqual(rule_value.get_value(), None)
 
     def test_variable(self):
-        rule_value = RuleValue({
-            'type': Types.VARIABLE,
-            'value': 'var'
-        }, self.context)
+        rule_value = RuleValue({'type': Types.VARIABLE, 'value': 'var'}, self.context)
         self.assertEqual(rule_value.get_value(), 'value')

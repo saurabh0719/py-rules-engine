@@ -13,11 +13,7 @@ class Condition:
     A class to represent a condition.
     """
 
-    def __init__(self,
-                 variable=None,
-                 operator=None,
-                 value=None,
-                 condition=None):
+    def __init__(self, variable=None, operator=None, value=None, condition=None):
         """
         Initialize Condition with either a condition dictionary or variable, operator, and value.
         """
@@ -44,29 +40,18 @@ class Condition:
         Build a dictionary representation of a value.
         """
         if isinstance(value, list):
-            return {
-                'type': 'list',
-                'value': [self._build_value(v) for v in value]
-            }
+            return {'type': 'list', 'value': [self._build_value(v) for v in value]}
         elif isinstance(value, dict):
-            return {
-                'type': 'dict',
-                'value': {
-                    k: self._build_value(v)
-                    for k, v in value.items()
-                }
-            }
+            return {'type': 'dict', 'value': {k: self._build_value(v) for k, v in value.items()}}
         else:
             return {'type': type(value).__name__, 'value': value}
 
-    def _create_new_condition(self, condition_dict,
-                              total_context_params=set()):
+    def _create_new_condition(self, condition_dict, total_context_params=set()):
         """
         Create a new condition by passing in a condition dictionary.
         """
         condition = Condition(condition=condition_dict)
-        condition.required_context_parameters = condition.required_context_parameters.union(
-            total_context_params)
+        condition.required_context_parameters = condition.required_context_parameters.union(total_context_params)
         return condition
 
     def __str__(self) -> str:
@@ -77,28 +62,22 @@ class Condition:
         Combine this condition and another condition with 'and'.
         """
         new_condition_dict = {'and': self._get_conditions('and', other)}
-        total_context_params = self.required_context_parameters.union(
-            other.required_context_parameters)
-        return self._create_new_condition(new_condition_dict,
-                                          total_context_params)
+        total_context_params = self.required_context_parameters.union(other.required_context_parameters)
+        return self._create_new_condition(new_condition_dict, total_context_params)
 
     def __or__(self, other):
         """
         Combine this condition and another condition with 'or'.
         """
         new_condition_dict = {'or': self._get_conditions('or', other)}
-        total_context_params = self.required_context_parameters.union(
-            other.required_context_parameters)
-        return self._create_new_condition(new_condition_dict,
-                                          total_context_params)
+        total_context_params = self.required_context_parameters.union(other.required_context_parameters)
+        return self._create_new_condition(new_condition_dict, total_context_params)
 
     def _get_conditions(self, operator, other):
         """
         Get a list of conditions combined with a specified operator.
         """
-        return self.condition.get(operator,
-                                  [self.condition]) + other.condition.get(
-                                      operator, [other.condition])
+        return self.condition.get(operator, [self.condition]) + other.condition.get(operator, [other.condition])
 
     def get_required_context_parameters(self):
         return list(self.required_context_parameters)
@@ -126,8 +105,7 @@ class Result:
 
     def __and__(self, other):
         merged = {**self.data, **other.data}
-        total_context_params = self.required_context_parameters.union(
-            other.required_context_parameters)
+        total_context_params = self.required_context_parameters.union(other.required_context_parameters)
         return self._create_new_result(merged, total_context_params)
 
     def __or__(self, other):
@@ -138,8 +116,7 @@ class Result:
         Create a new result by passing in a result dictionary.
         """
         result = Result(result=result_dict)
-        result.required_context_parameters = result.required_context_parameters.union(
-            total_context_params)
+        result.required_context_parameters = result.required_context_parameters.union(total_context_params)
         return result
 
     def to_dict(self):
@@ -175,8 +152,7 @@ class Rule:
         self.name = name
         self.kwargs = kwargs
         self.id = kwargs.get('id') if kwargs.get('id') else str(uuid.uuid4())
-        self.parent_id = kwargs.get('parent_id') if kwargs.get(
-            'parent_id') else None
+        self.parent_id = kwargs.get('parent_id') if kwargs.get('parent_id') else None
         self.rule_metadata = self.load_rule_metadata()
         self.data = {'rule_metadata': self.rule_metadata}
 
@@ -194,8 +170,7 @@ class Rule:
         }
 
     def add_required_context_parameter(self, parameter):
-        current_context_params: list = self.rule_metadata.get(
-            'required_context_parameters', [])
+        current_context_params: list = self.rule_metadata.get('required_context_parameters', [])
         if parameter not in current_context_params:
             current_context_params.append(parameter)
 

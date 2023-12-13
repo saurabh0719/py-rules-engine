@@ -28,8 +28,7 @@ class RuleValue:
             Types.INTEGER: int,
             Types.FLOAT: float,
             Types.DATE: lambda x: datetime.strptime(x, '%Y-%m-%d').date(),
-            Types.DATETIME:
-            lambda x: datetime.strptime(x, '%Y-%m-%dT%H:%M:%S'),
+            Types.DATETIME: lambda x: datetime.strptime(x, '%Y-%m-%dT%H:%M:%S'),
             Types.LIST: self._parse_list,
             Types.DICTIONARY: self._parse_dict,
             Types.NONETYPE: lambda x: None,
@@ -37,17 +36,13 @@ class RuleValue:
         }
 
         if self.vtype not in self.type_map:
-            raise InvalidRuleValueTypeError(
-                f'Invalid type in rule value: {self.vtype}')
+            raise InvalidRuleValueTypeError(f'Invalid type in rule value: {self.vtype}')
 
     def _parse_list(self, value):
         return [RuleValue(item, self.context).get_value() for item in value]
 
     def _parse_dict(self, value):
-        return {
-            key: RuleValue(value, self.context).get_value()
-            for key, value in value.items()
-        }
+        return {key: RuleValue(value, self.context).get_value() for key, value in value.items()}
 
     def get_value(self) -> any:
         """

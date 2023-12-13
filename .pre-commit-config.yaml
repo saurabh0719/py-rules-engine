@@ -13,6 +13,7 @@ repos:
       - id: check-executables-have-shebangs
       - id: check-docstring-first
       - id: check-json
+      - id: check-toml
       - id: check-merge-conflict
       - id: check-symlinks
       - id: check-vcs-permalinks
@@ -38,14 +39,14 @@ repos:
     rev: v0.40.2
     hooks:
       - id: yapf
-        # additional_dependencies: [toml]
+        additional_dependencies: [toml]
 
 
   - repo: https://github.com/hadialqattan/pycln
-    rev: v2.4.0 # Possible releases: https://github.com/hadialqattan/pycln/releases
+    rev: v2.4.0
     hooks:
       - id: pycln
-        # args: [--config=pyproject.toml, -a]
+        args: [--config=pyproject.toml, -a]
 
 ci:
   autoupdate_schedule: weekly

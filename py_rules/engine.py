@@ -28,11 +28,9 @@ class RuleEngine:
             raise InvalidRuleError('Context must be a dict')
 
         if 'required_context_parameters' in self.rule.rule_metadata:
-            for parameter in self.rule.rule_metadata.get(
-                    'required_context_parameters'):
+            for parameter in self.rule.rule_metadata.get('required_context_parameters'):
                 if parameter not in self.context:
-                    raise InvalidRuleError(
-                        f'Context is missing required parameter: {parameter}')
+                    raise InvalidRuleError(f'Context is missing required parameter: {parameter}')
 
     def evaluate_result(self, action: dict, default=False) -> dict:
         """
@@ -73,10 +71,7 @@ class RuleEngine:
 
         for key, value in condition_block.items():
             if key in ['and', 'or']:
-                results = [
-                    self.evaluate_condition_block(sub_condition)
-                    for sub_condition in value
-                ]
+                results = [self.evaluate_condition_block(sub_condition) for sub_condition in value]
                 return all(results) if key == 'and' else any(results)
             elif key == 'condition':
                 return RuleCondition(value, self.context).evaluate()

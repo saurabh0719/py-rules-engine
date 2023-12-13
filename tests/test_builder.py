@@ -13,8 +13,7 @@ class TestBuilder(unittest.TestCase):
                     'variable': 'number',
                     'operator': 'in',
                     'value': {
-                        'type':
-                        'list',
+                        'type': 'list',
                         'value': [{
                             'type': 'int',
                             'value': 1
@@ -30,33 +29,25 @@ class TestBuilder(unittest.TestCase):
             })
 
     def test_result(self):
-        result = Result('xyz', 'str', 'Condition met') & Result(
-            'result', 'variable', 'xyz')
-        self.assertEqual(
-            result.to_dict(), {
+        result = Result('xyz', 'str', 'Condition met') & Result('result', 'variable', 'xyz')
+        self.assertEqual(result.to_dict(), {
+            'result': {
+                'xyz': {
+                    'type': 'str',
+                    'value': 'Condition met'
+                },
                 'result': {
-                    'xyz': {
-                        'type': 'str',
-                        'value': 'Condition met'
-                    },
-                    'result': {
-                        'type': 'variable',
-                        'value': 'xyz'
-                    }
+                    'type': 'variable',
+                    'value': 'xyz'
                 }
-            })
+            }
+        })
 
     def test_rule(self):
         condition = Condition('number', 'in', [1, 2, 3])
-        result = Result('xyz', 'str', 'Condition met') & Result(
-            'result', 'variable', 'xyz')
+        result = Result('xyz', 'str', 'Condition met') & Result('result', 'variable', 'xyz')
         rule = Rule('rule-one').If(condition).Then(result).Else(result)
         dict_repr = rule.to_dict()
         metadata = dict_repr.pop('rule_metadata')
         self.assertEqual(metadata['name'], 'rule-one')
-        self.assertEqual(
-            dict_repr, {
-                'if': condition.to_dict(),
-                'then': result.to_dict(),
-                'else': result.to_dict()
-            })
+        self.assertEqual(dict_repr, {'if': condition.to_dict(), 'then': result.to_dict(), 'else': result.to_dict()})

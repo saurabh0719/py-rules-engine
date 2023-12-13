@@ -11,34 +11,15 @@ class TestRuleCondition(unittest.TestCase):
         self.context = {'var': 'value'}
 
     def test_missing_operator(self):
-        condition = {
-            'variable': 'var',
-            'value': {
-                'type': Types.STRING,
-                'value': 'test'
-            }
-        }
+        condition = {'variable': 'var', 'value': {'type': Types.STRING, 'value': 'test'}}
         with self.assertRaises(InvalidRuleConditionError):
             RuleCondition(condition, self.context)
 
     def test_missing_variable(self):
-        condition = {
-            'operator': Operators.EQUAL,
-            'value': {
-                'type': Types.STRING,
-                'value': 'test'
-            }
-        }
+        condition = {'operator': Operators.EQUAL, 'value': {'type': Types.STRING, 'value': 'test'}}
         with self.assertRaises(InvalidRuleConditionError):
             RuleCondition(condition, self.context)
 
     def test_evaluate(self):
-        condition = {
-            'operator': Operators.EQUAL,
-            'variable': 'var',
-            'value': {
-                'type': Types.STRING,
-                'value': 'value'
-            }
-        }
+        condition = {'operator': Operators.EQUAL, 'variable': 'var', 'value': {'type': Types.STRING, 'value': 'value'}}
         self.assertTrue(RuleCondition(condition, self.context).evaluate())
