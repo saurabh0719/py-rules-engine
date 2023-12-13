@@ -1,15 +1,9 @@
-"""
-Example usage:
-
-condition = Condition('number', 'is_in', [1, 2, 3]) & Condition('number', '=', 1) & Condition('number', '=', 1) | Condition('number', '=', 2)
-result = Result().add('xyz', 'str', 'Condition met').add('result', 'variable', 'xyz')
-rule = Rule('Complex rule').If(condition).Then(result).Else(result)
-
-print(rule.to_dict())
-"""
-from py_rules.constants import Operators
+import datetime
+import uuid
+from .__version__ import __version__ as version
+from py_rules.constants import Operators, Types
 from py_rules.errors import InvalidRuleConditionError
-from py_rules.utils import save_dict_to_json
+from py_rules.utils import load_from_json, save_dict_to_json
 
 
 class Condition:
@@ -35,6 +29,10 @@ class Condition:
                 }
             }
 
+        self.required_context_parameters = set()
+        if variable is not None:
+            self.required_context_parameters.add(variable)
+
     def _build_value(self, value):
         """
         Build a dictionary representation of a value.
@@ -46,6 +44,14 @@ class Condition:
         else:
             return {'type': type(value).__name__, 'value': value}
         
+    def _create_new_condition(self, condition_dict, total_context_params=set()):
+        """
+        Create a new condition by passing in a condition dictionary.
+        """
+        condition = Condition(condition=condition_dict)
+        condition.required_context_parameters = condition.required_context_parameters.union(total_context_params)
+        return condition
+        
     def __str__(self) -> str:
         return str(self.condition)
 
@@ -53,103 +59,160 @@ class Condition:
         """
         Combine this condition and another condition with 'and'.
         """
-        new_condition = {'and': self._get_conditions('and', other)}
-        return Condition(condition=new_condition)
+        new_condition_dict = {'and': self._get_conditions('and', other)}
+        total_context_params = self.required_context_parameters.union(other.required_context_parameters)
+        return self._create_new_condition(new_condition_dict, total_context_params)
 
     def __or__(self, other):
         """
         Combine this condition and another condition with 'or'.
         """
-        new_condition = {'or': self._get_conditions('or', other)}
-        return Condition(condition=new_condition)
+        new_condition_dict = {'or': self._get_conditions('or', other)}
+        total_context_params = self.required_context_parameters.union(other.required_context_parameters)
+        return self._create_new_condition(new_condition_dict, total_context_params)
 
     def _get_conditions(self, operator, other):
         """
         Get a list of conditions combined with a specified operator.
         """
         return self.condition.get(operator, [self.condition]) + other.condition.get(operator, [other.condition])
+    
+    def get_required_context_parameters(self):
+        return list(self.required_context_parameters)
 
     def to_dict(self):
         return self.condition
 
 
 class Result:
-    def __init__(self):
-        self.result = {}
+    def __init__(self, key=None, vtype=None, value=None, result=None):
+        if result:
+            self.data = result
+        else:
+            self.data = {}
+            self.data[key] = {
+                'type': vtype,
+                'value': value
+            }
+
+        self.required_context_parameters = set()
+
+        if vtype == Types.VARIABLE and value is not None:
+            self.required_context_parameters.add(value)
 
     def __str__(self):
         return str(self.to_dict())
-
-    def add(self, key, type, value):
-        self.result[key] = {
-            'type': type,
-            'value': value
-        }
-        return self
+    
+    def __and__(self, other):
+        merged = {**self.data, **other.data}
+        total_context_params = self.required_context_parameters.union(other.required_context_parameters)
+        return self._create_new_result(merged, total_context_params)
+    
+    def __or__(self, other):
+        raise NotImplementedError
+    
+    def _create_new_result(self, result_dict, total_context_params=set()):
+        """
+        Create a new result by passing in a result dictionary.
+        """
+        result = Result(result=result_dict)
+        result.required_context_parameters = result.required_context_parameters.union(total_context_params)
+        return result
     
     def to_dict(self):
-        return {"result": self.result}
+        return {"result": self.data}
 
 
 class Rule:
     """
     A class to represent a rule.
+
+    Example usage:
+
+    A)
+    condition = Condition('number', 'in', [1, 2, 3]) & Condition('number', '=', 1) & \
+    Condition('number', '=', 1) | Condition('number', '=', 2)
+    result = Result('xyz', 'str', 'Condition met') & Result('result', 'variable', 'xyz')
+    rule1 = Rule('Complex rule').If(condition).Then(result).Else(result) 
+    print(rule1.to_dict())
+
+    B)
+    rule = Rule('new-user-subscription').If(
+        Condition('number', 'in', [1, 2, 3]) & Condition('number', '=', 1) | Condition('number', '=', 2)).Then(
+            Result('result', 'variable', 'number')).Else(
+                Rule('new-user-subscription').If(Condition('number', 'in', [1, 2, 3])).Then(
+                    Result().add('result', 'variable', 'number')))
+    print(rule.to_dict())
     """
 
-    def __init__(self, rule):
+    def __init__(self, name, **kwargs):
         """
         Initialize Rule with a rule name.
         """
-        self.rule = {
-            'rule': rule
+        self.name = name
+        self.kwargs = kwargs
+        self.id = kwargs.get('id') if kwargs.get('id') else str(uuid.uuid4())
+        self.parent_id = kwargs.get('parent_id') if kwargs.get('parent_id') else None
+        self.rule_metadata = self.load_rule_metadata()
+        self.data = {'rule_metadata': self.rule_metadata}
+
+    def __str__(self) -> str:
+        return str(self.data)
+    
+    def load_rule_metadata(self) -> dict:
+        return {
+            '__version__': version,
+            'id': self.id,
+            'parent_id': self.parent_id,
+            'created': str(datetime.datetime.now()),
+            'name': str(self.name),
+            'required_context_parameters': []
         }
-        self.current_operator = "__init__"
+    
+    def add_required_context_parameter(self, parameter):
+        current_context_params: list = self.rule_metadata.get('required_context_parameters', [])
+        if parameter not in current_context_params:
+            current_context_params.append(parameter)
+    
+    def set_parent_id(self, parent_id):
+        self.data['rule_metadata']['parent_id'] = parent_id
+        return self
 
-    def __str__(self):
-        return str(self.rule)
-
-    def If(self, condition: Condition):
+    def If(self, condition: Condition) -> 'Rule':
         """
         Set the 'if' condition of the rule.
         """
-        if self.current_operator == "__init__":
-            self.rule['if'] = condition.to_dict()
-        else:
-            raise Exception('If must be the first condition in the rule')
-        
-        self.current_operator = "If"
+        self.data['if'] = condition.to_dict()
+        for parameter in condition.required_context_parameters:
+            self.add_required_context_parameter(parameter)
         return self
 
-    def Then(self, result: Result):
+    def Then(self, result: Result) -> 'Rule':
         """
         Set the 'then' result of the rule.
         """
-        if self.current_operator == "If":
-            self.rule['then'] = result.to_dict()
-        else:
-            raise Exception('Then must be after If in the rule')
-        
-        self.current_operator = "Then"
+        self.data['then'] = result.to_dict()
         return self
 
-    def Else(self, obj):
+    def Else(self, obj) -> 'Rule':
         """
         Set the 'else' result of the rule.
         """
-        if self.current_operator == "Then":
-            if isinstance(obj, (Rule, Result)):
-                self.rule['else'] = obj.to_dict()
-            else:
-                raise Exception('Else must be a Rule or Result type object')
+        if isinstance(obj, Rule):
+            self.data['else'] = obj.set_parent_id(self.id).to_dict()
+        elif isinstance(obj, Result):
+            self.data['else'] = obj.to_dict()
         else:
-            raise Exception('Else must be after Then in the rule')
-        
-        self.current_operator = "Else"
+            raise Exception('Else must be a Rule or Result type object')
         return self
     
-    def to_dict(self):
-        return self.rule
+    def to_dict(self) -> dict:
+        return self.data
     
-    def to_file(self, filename):
-        save_dict_to_json(self.rule, filename)
+    def save_to_file(self, filename) -> 'Rule':
+        save_dict_to_json(self.data, filename)
+        return self
 
+    def load_from_file(self, filename) -> 'Rule':
+        self.data = load_from_json(filename)
+        return self

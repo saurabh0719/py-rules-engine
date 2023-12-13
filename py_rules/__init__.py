@@ -6,6 +6,8 @@ from .expression import RuleExpression
 from .utils import load_from_json
 from .value import RuleValue
 
+from .__version__ import __version__
+
 __all__ = [
     'Condition',
     'InvalidRuleConditionError',
@@ -20,3 +22,6 @@ __all__ = [
     'RuleValue',
     'load_from_json'
 ]
+
+__author__ = 'Saurabh Pujari'
+__license__ = 'BSD 3-Clause License'

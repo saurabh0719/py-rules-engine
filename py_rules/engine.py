@@ -1,3 +1,4 @@
+from .builder import Rule
 from .condition import RuleCondition
 from .errors import InvalidRuleConditionError, InvalidRuleError
 
@@ -6,30 +7,17 @@ class RuleEngine:
     """
     Class to evaluate a parsed rule.
     """
-    def __init__(self, rule: dict, context: dict) -> None:
+    def __init__(self, rule: Rule, context: dict) -> None:
         """
         Initialize the RuleEngine with a context
         
         Args:
+            rule (Rule): The rule to evaluate
             context (dict): The context in which to evaluate the rule.
-            func_map (dict): A map of function names to functions.
         """
         self.context = context
         self.rule = rule
-        self.rule_name = rule.get('rule')
-        self._validate_rule()
         self._validate_context()
-        
-    def _validate_rule(self) -> None:
-        """
-        Validate the rule.
-        """
-        if not isinstance(self.rule, dict):
-            raise InvalidRuleError('Rule must be a dict')
-        if not self.rule.get('if'):
-            raise InvalidRuleError('Rule must have an "if" property')
-        if not self.rule.get('then'):
-            raise InvalidRuleError('Rule must have a "then" property')
         
     def _validate_context(self) -> None:
         """
@@ -38,14 +26,14 @@ class RuleEngine:
         if not isinstance(self.context, dict):
             raise InvalidRuleError('Context must be a dict')
         
-        if 'required_context_parameters' in self.rule:
-            for parameter in self.rule['required_context_parameters']:
+        if 'required_context_parameters' in self.rule.rule_metadata:
+            for parameter in self.rule.rule_metadata.get('required_context_parameters'):
                 if parameter not in self.context:
                     raise InvalidRuleError(f'Context is missing required parameter: {parameter}')
                 
-    def _build_result(self, action: dict) -> dict:
+    def evaluate_result(self, action: dict, default=False) -> dict:
         """
-        Build a result dict from the schema.
+        Build a result dict from the schema or return the default value bool value
 
         Args:
             result_schema (dict): The schema of result dict to build.
@@ -53,13 +41,18 @@ class RuleEngine:
         Returns:
             dict: The built result dict.
         """
-        result_schema = action.get('result', {})
         result = {}
-        for name, data in result_schema.items():
-            if data.get('type') == 'variable':
-                result[name] = self.context.get(data.get('value'))
-            else:
-                result[name] = data.get('value')
+        if 'result' in action:
+            schema = action.get('result', {})
+            for name, data in schema.items():
+                if data.get('type') == 'variable':
+                    result[name] = self.context.get(data.get('value'))
+                else:
+                    result[name] = data.get('value')
+
+        if not result:
+            return default
+        
         return result
 
     def evaluate_condition_block(self, condition_block: dict) -> bool:
@@ -97,11 +90,17 @@ class RuleEngine:
         - If 'then' is absent, the rule returns True if the condition is met, else False. 
         - If 'else' is absent, the rule returns the result of 'then' if the condition is met, else False.
         """
-        if_condition = self.rule.get('if')
-        then_action = self.rule.get('then')
-        else_action = self.rule.get('else')
+        if_condition: dict = self.rule.data.get('if')
+        then_action: dict = self.rule.data.get('then')
+        else_action: dict = self.rule.data.get('else')
 
         if self.evaluate_condition_block(if_condition):
-            return self._build_result(then_action) if then_action else True
+            if then_action and then_action.get('if'):
+                return self.evaluate(then_action) 
+            else:
+                return self.evaluate_result(then_action, default=True)
         else:
-            return self._build_result(else_action) if else_action else False
+            if else_action and else_action.get('if'):
+                return self.evaluate(else_action)
+            else:
+                return self.evaluate_result(else_action, default=False)

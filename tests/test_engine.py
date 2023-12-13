@@ -8,10 +8,13 @@ class TestEngine(unittest.TestCase):
 
     def test_builder(self):
         condition = Condition('number', 'in', [1, 5, 3]) & Condition('number', '=', 5) & Condition('number', '>', 1) | Condition('number', '=', 2)
-        result = Result().add('xyz', 'str', 'Condition met').add('abc', 'variable', 'str_var')
+        result = Result('xyz', 'str', 'Condition met') & Result('abc', 'variable', 'str_var')
         rule = Rule('Complex rule').If(condition).Then(result).Else(result)
-
-        engine = RuleEngine(rule.to_dict(), self.context)
+        engine = RuleEngine(rule, self.context)
         self.assertEqual(engine.evaluate(), {"xyz": "Condition met", "abc": "py_rules"})
-        
 
+    def test_required_parameters(self):
+        condition = Condition('a', '=', 2) & Condition('b', '=', 5) & Condition('c', '>', 1)
+        result = Result('abc', 'variable', 'str_var')
+        rule = Rule('Complex rule').If(condition).Then(result).Else(result)
+        self.assertEqual(len(set(rule.rule_metadata.get('required_context_parameters', []))), 3)

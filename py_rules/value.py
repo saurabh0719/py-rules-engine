@@ -16,9 +16,9 @@ class RuleValue:
             value (dict): The value object, which should have 'type' and 'value' properties.
         """
         self.context = context
-        self.type = value.get('type')
+        self.vtype = value.get('type')
         self.value = value.get('value')
-        if not self.type:
+        if not self.vtype:
             raise InvalidRuleValueError('Missing type in rule value')
         
         self.type_map = {
@@ -34,8 +34,8 @@ class RuleValue:
             Types.VARIABLE: self.context.get
         }
 
-        if self.type not in self.type_map:
-            raise InvalidRuleValueTypeError(f'Invalid type in rule value: {self.type}')
+        if self.vtype not in self.type_map:
+            raise InvalidRuleValueTypeError(f'Invalid type in rule value: {self.vtype}')
 
     def _parse_list(self, value):
         return [RuleValue(item, self.context).get_value() for item in value]
@@ -50,8 +50,8 @@ class RuleValue:
         Returns:
             The parsed value.
         """
-        parse_func = self.type_map.get(self.type)
+        parse_func = self.type_map.get(self.vtype)
         if parse_func:
             return parse_func(self.value)
         else:
-            raise InvalidRuleValueError(f'Invalid type: {self.type}')
+            raise InvalidRuleValueError(f'Invalid type: {self.vtype}')
