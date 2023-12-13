@@ -187,11 +187,16 @@ class Rule:
             self.add_required_context_parameter(parameter)
         return self
 
-    def Then(self, result: Result) -> 'Rule':
+    def Then(self, obj) -> 'Rule':
         """
         Set the 'then' result of the rule.
         """
-        self.data['then'] = result.to_dict()
+        if isinstance(obj, Rule):
+            self.data['then'] = obj.set_parent_id(self.id).to_dict()
+        elif isinstance(obj, Result):
+            self.data['then'] = obj.to_dict()
+        else:
+            raise Exception('Then must be a Rule or Result type object')
         return self
 
     def Else(self, obj) -> 'Rule':

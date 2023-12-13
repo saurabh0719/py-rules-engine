@@ -1,0 +1,73 @@
+{
+    "rule_metadata": {
+        "__version__": "0.1.0",
+        "id": "5b33b94e-c85d-44d8-82b1-6a27e123b75b",
+        "parent_id": null,
+        "created": "2023-12-13 23:49:01.526555",
+        "name": "new-user-subscription",
+        "required_context_parameters": [
+            "number"
+        ]
+    },
+    "if": {
+        "condition": {
+            "variable": "number",
+            "operator": "=",
+            "value": {
+                "type": "int",
+                "value": 1
+            }
+        }
+    },
+    "then": {
+        "result": {
+            "result": {
+                "type": "variable",
+                "value": "number"
+            }
+        }
+    },
+    "else": {
+        "rule_metadata": {
+            "__version__": "0.1.0",
+            "id": "f897156b-430e-4a5f-8dde-63ea10a1e50e",
+            "parent_id": "5b33b94e-c85d-44d8-82b1-6a27e123b75b",
+            "created": "2023-12-13 23:49:01.526617",
+            "name": "new-user-subscription",
+            "required_context_parameters": [
+                "number"
+            ]
+        },
+        "if": {
+            "condition": {
+                "variable": "number",
+                "operator": "in",
+                "value": {
+                    "type": "list",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 1
+                        },
+                        {
+                            "type": "int",
+                            "value": 2
+                        },
+                        {
+                            "type": "int",
+                            "value": 3
+                        }
+                    ]
+                }
+            }
+        },
+        "then": {
+            "result": {
+                "result": {
+                    "type": "variable",
+                    "value": "number"
+                }
+            }
+        }
+    }
+}
