@@ -21,7 +21,7 @@ class RuleExpression:
         self.left_value = left_value
         self.right_value = right_value
 
-        self.operators = {
+        self.operator_to_handler_map = {
             Operators.EQUAL: self.equal,
             Operators.LESS_THAN: self.less_than,
             Operators.GREATER_THAN: self.greater_than,
@@ -48,7 +48,7 @@ class RuleExpression:
                 if not isinstance(left_value, type(right_value)):
                     raise InvalidRuleValueError('Values are not comparable')
 
-            return self.operators[self.operator](left_value, right_value)
+            return self.operator_to_handler_map[self.operator](left_value, right_value)
         except KeyError:
             raise InvalidRuleExpressionError(
                 f'Invalid expression: {self.left_value} {self.operator} {self.right_value}')
