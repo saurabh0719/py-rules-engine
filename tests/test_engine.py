@@ -1,3 +1,4 @@
+import datetime
 import unittest
 
 from py_rules.builder import Condition, Result, Rule
@@ -22,3 +23,68 @@ class TestEngine(unittest.TestCase):
         result = Result('abc', 'variable', 'str_var')
         rule = Rule('Complex rule').If(condition).Then(result).Else(result)
         self.assertEqual(len(set(rule.rule_metadata.get('required_context_parameters', []))), 3)
+
+    def test_basic_rules(self):
+        condition = Condition('number', '=', 5)
+        result = Result('xyz', 'str', 'Condition met')
+        rule = Rule('Basic rule').If(condition).Then(result).Else(result)
+        engine = RuleEngine(rule, self.context)
+        self.assertEqual(engine.evaluate(), {"xyz": "Condition met"})
+
+        rule = Rule('Basic rule').If(condition)
+        engine = RuleEngine(rule, self.context)
+        self.assertEqual(engine.evaluate(), True)
+
+        condition = Condition('number', '=', 6)
+        rule = Rule('Basic rule').If(condition)
+        engine = RuleEngine(rule, self.context)
+        self.assertEqual(engine.evaluate(), False)
+
+    def test_multiple_conditions(self):
+        condition = Condition('number', '=', 5) & Condition('number', '>', 1)
+        result = Result('xyz', 'str', 'Condition met')
+        rule = Rule('Multiple conditions').If(condition).Then(result).Else(result)
+        engine = RuleEngine(rule, self.context)
+        self.assertEqual(engine.evaluate(), {"xyz": "Condition met"})
+
+        condition = Condition('number', '=', 5) & Condition('number', '>', 10)
+        rule = Rule('Multiple conditions').If(condition).Then(result).Else(result)
+        engine = RuleEngine(rule, self.context)
+        self.assertEqual(engine.evaluate(), {"xyz": "Condition met"})
+
+        condition = Condition('number', '=', 5) & Condition('number', '<', 10)
+        rule = Rule('Multiple conditions').If(condition).Then(result).Else(result)
+        engine = RuleEngine(rule, self.context)
+        self.assertEqual(engine.evaluate(), {"xyz": "Condition met"})
+
+        condition = Condition('number', '=', 5) & Condition('number', '<', 1)
+        rule = Rule('Multiple conditions').If(condition).Then(result).Else(result)
+        engine = RuleEngine(rule, self.context)
+        self.assertEqual(engine.evaluate(), {"xyz": "Condition met"})
+
+    def test_datetime_expressions(self):
+        """
+        The condition to compare 'date' with is a 'date' object
+        """
+
+        context = {"date": datetime.date(2020, 1, 1)}
+        condition = Condition('date', '=', datetime.date(2020, 1, 1))
+        result = Result('xyz', 'str', 'Condition met')
+        rule = Rule('Datetime rule').If(condition).Then(result).Else(result)
+        engine = RuleEngine(rule, context)
+        self.assertEqual(engine.evaluate(), {"xyz": "Condition met"})
+
+        condition = Condition('date', '=', datetime.date(2020, 1, 2))
+        rule = Rule('Datetime rule').If(condition).Then(result).Else(result)
+        engine = RuleEngine(rule, context)
+        self.assertEqual(engine.evaluate(), {"xyz": "Condition met"})
+
+        condition = Condition('date', '=', datetime.date(2019, 1, 1))
+        rule = Rule('Datetime rule').If(condition).Then(result).Else(result)
+        engine = RuleEngine(rule, context)
+        self.assertEqual(engine.evaluate(), {"xyz": "Condition met"})
+
+        condition = Condition('date', '=', datetime.date(2019, 1, 2))
+        rule = Rule('Datetime rule').If(condition).Then(result).Else(result)
+        engine = RuleEngine(rule, context)
+        self.assertEqual(engine.evaluate(), {"xyz": "Condition met"})

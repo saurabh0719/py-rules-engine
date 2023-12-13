@@ -66,7 +66,7 @@ class RuleEngine:
             dict: The built result dict.
         """
         result = {}
-        if 'result' in action:
+        if action and 'result' in action:
             schema = action.get('result', {})
             for name, data in schema.items():
                 if data.get('type') == 'variable':

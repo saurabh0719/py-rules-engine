@@ -27,6 +27,7 @@
 * [Rule builder](#builder)
 * [Rule Engine](#engine)
 * [Tests](#tests)
+* [To do](#todo)
 
 
 <span id="installation"></span>
@@ -301,6 +302,15 @@ Run tests -
 ```sh
 python -m unittest -v
 ```
+
+
+<span id="todo"></span>
+
+### To do
+
+- Pass a global config dictionary from `RuleEngine` to control the following -
+    - Date parsing functions
+    - Rule metadata creation
 
 
 [Go back to top](#table-of-contents)

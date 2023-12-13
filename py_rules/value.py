@@ -23,7 +23,7 @@ Example usage:
 This will create a `RuleValue` object that represents an integer value of 30. The `get_value` method returns the parsed value.
 """
 
-from datetime import datetime
+from datetime import date, datetime
 
 from .constants import Types
 from .errors import InvalidRuleValueError, InvalidRuleValueTypeError
@@ -52,8 +52,8 @@ class RuleValue:
             Types.STRING: str,
             Types.INTEGER: int,
             Types.FLOAT: float,
-            Types.DATE: lambda x: datetime.strptime(x, '%Y-%m-%d').date(),
-            Types.DATETIME: lambda x: datetime.strptime(x, '%Y-%m-%dT%H:%M:%S'),
+            Types.DATE: lambda x: datetime.strptime(x, '%Y-%m-%d').date() if not isinstance(x, date) else x,
+            Types.DATETIME: lambda x: datetime.strptime(x, '%Y-%m-%dT%H:%M:%S') if not isinstance(x, datetime) else x,
             Types.LIST: self._parse_list,
             Types.DICTIONARY: self._parse_dict,
             Types.NONETYPE: lambda x: None,
