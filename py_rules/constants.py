@@ -1,4 +1,14 @@
-class Types:
+class BaseConstant:
+
+    @classmethod
+    def list_all(cls):
+        _cls = cls()
+        return [
+            getattr(cls, attr) for attr in dir(_cls) if not callable(getattr(_cls, attr)) and not attr.startswith("__")
+        ]
+
+
+class Types(BaseConstant):
     BOOLEAN = "bool"
     INTEGER = "int"
     FLOAT = "float"
@@ -11,7 +21,7 @@ class Types:
     VARIABLE = "variable"
 
 
-class Operators:
+class Operators(BaseConstant):
     EQUAL = "=="
     NOT_EQUAL = "!="
     LESS_THAN = "<"
@@ -20,4 +30,3 @@ class Operators:
     GREATER_THAN_OR_EQUAL = ">="
     IN = "in"
     NOT_IN = "not in"
-    BETWEEN = "between"

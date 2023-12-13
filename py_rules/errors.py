@@ -12,3 +12,7 @@ class InvalidRuleExpressionError(ValueError):
 
 class InvalidRuleError(ValueError):
     pass
+
+
+class InvalidRuleValueTypeError(ValueError):
+    pass

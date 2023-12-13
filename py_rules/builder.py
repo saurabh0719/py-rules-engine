@@ -7,6 +7,9 @@ rule = Rule('Complex rule').If(condition).Then(result).Else(result)
 
 print(rule.to_dict())
 """
+from py_rules.constants import Operators
+from py_rules.errors import InvalidRuleConditionError
+
 
 class Condition:
     """
@@ -17,6 +20,9 @@ class Condition:
         """
         Initialize Condition with either a condition dictionary or variable, operator, and value.
         """
+        if operator and operator not in Operators.list_all():
+            raise InvalidRuleConditionError(f'Invalid operator - {operator}')
+
         if condition:
             self.condition = condition
         else:

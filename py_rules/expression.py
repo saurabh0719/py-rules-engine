@@ -13,7 +13,7 @@ class RuleExpression:
         Initialize the RuleExpression with an operator and two values.
 
         Args:
-            operator (str): The operator, which should be one of '<', '>', '<=', '>=', '==', '!=', 'between', 'in', 'not in'.
+            operator (str): The operator, which should be one of '<', '>', '<=', '>=', '==', '!=', 'in', 'not in'.
             left_value (RuleValue): The left value.
             right_value (RuleValue): The right value.
         """
@@ -28,10 +28,12 @@ class RuleExpression:
             Operators.LESS_THAN_OR_EQUAL: self.less_than_equal,
             Operators.GREATER_THAN_OR_EQUAL: self.greater_than_equal,
             Operators.NOT_EQUAL: self.not_equal,
-            Operators.BETWEEN: self.between,
             Operators.IN: self.in_,
             Operators.NOT_IN: self.not_in,
         }
+
+        if self.operator not in self.operator_to_handler_map:
+            raise InvalidRuleExpressionError(f'Invalid operator type - {self.operator}')
 
     def evaluate(self) -> bool:
         """
@@ -44,7 +46,7 @@ class RuleExpression:
             left_value = self.left_value.get_value()
             right_value = self.right_value.get_value()
 
-            if self.operator != '==':
+            if self.operator not in [Operators.EQUAL, Operators.NOT_EQUAL, Operators.IN, Operators.NOT_IN]:
                 if not isinstance(left_value, type(right_value)):
                     raise InvalidRuleValueError('Values are not comparable')
 
@@ -70,11 +72,6 @@ class RuleExpression:
 
     def not_equal(self, left_value, right_value) -> bool:
         return left_value != right_value
-    
-    def between(self, left_value, right_value) -> bool:
-        if not isinstance(right_value, list) or len(right_value) != 2:
-            raise InvalidRuleValueError('Invalid value for between operator')
-        return left_value <= right_value[0] and left_value >= right_value[1]
     
     def in_(self, left_value, right_value) -> bool:
         if not isinstance(right_value, list):
