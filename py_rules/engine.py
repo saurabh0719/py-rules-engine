@@ -1,3 +1,26 @@
+"""
+This module, `engine.py`, contains the `RuleEngine` class which is used to evaluate a parsed rule.
+
+The `RuleEngine` class takes a `Rule` object and a context (a dictionary) as input. The context is used to evaluate the conditions in the rule.
+
+The `RuleEngine` class provides several methods:
+
+- `__init__`: Initializes the `RuleEngine` with a rule and a context. It also validates the context.
+- `_validate_context`: Validates the context. It checks if the context is a dictionary and if it contains all the required parameters specified in the rule's metadata.
+- `evaluate_result`: Builds a result dictionary from the action schema or returns a default boolean value.
+- `evaluate_condition_block`: Evaluates a condition block. It supports logical `and` and `or` operations.
+- `evaluate`: Evaluates the rule. It checks the 'if' condition and returns the result of the 'then' action if the condition is met, or the result of the 'else' action otherwise.
+
+Example usage:
+
+    rule = Rule('Temperature Rule').If(Condition('temperature', '>', 30)).Then(Result('message', 'str', 'It is hot!'))
+    context = {'temperature': 35}
+    engine = RuleEngine(rule, context)
+    print(engine.evaluate())  # prints: {'message': 'It is hot!'}
+
+This will create a rule that checks if the temperature is greater than 30. The context provides the actual temperature. The `RuleEngine` evaluates the rule in the given context and returns the result of the rule.
+"""
+
 from .builder import Rule
 from .condition import RuleCondition
 from .errors import InvalidRuleConditionError, InvalidRuleError

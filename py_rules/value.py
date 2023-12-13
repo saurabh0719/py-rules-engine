@@ -1,3 +1,28 @@
+"""
+This module, `value.py`, contains the `RuleValue` class which is used to parse and handle the 'value' field of a condition.
+
+The `RuleValue` class takes a value dictionary and a context dictionary as input. The value dictionary should contain 'type' and 'value' properties.
+
+The `RuleValue` class provides several methods:
+
+- `__init__`: Initializes the `RuleValue` with a value dictionary and a context. It also validates the value type.
+- `_parse_list`: Parses a list value. It recursively parses each item in the list.
+- `_parse_dict`: Parses a dictionary value. It recursively parses each value in the dictionary.
+- `get_value`: Returns the parsed value according to its type.
+
+Example usage:
+
+    value_dict = {
+        'type': 'int',
+        'value': 30
+    }
+    context = {}
+    value = RuleValue(value_dict, context)
+    print(value.get_value())  # prints: 30
+
+This will create a `RuleValue` object that represents an integer value of 30. The `get_value` method returns the parsed value.
+"""
+
 from datetime import datetime
 
 from .constants import Types

@@ -1,3 +1,25 @@
+"""
+This module, `expression.py`, contains the `RuleExpression` class which is used to evaluate an expression in a rule.
+
+The `RuleExpression` class takes an operator and two `RuleValue` objects as input. The operator should be one of '<', '>', '<=', '>=', '==', '!=', 'in', 'not in'.
+
+The `RuleExpression` class provides several methods:
+
+- `__init__`: Initializes the `RuleExpression` with an operator and two `RuleValue` objects. It also validates the operator.
+- `evaluate`: Evaluates the expression. It gets the values of the `RuleValue` objects and applies the operator to them.
+- `equal`, `less_than`, `greater_than`, `less_than_equal`, `greater_than_equal`, `not_equal`, `in_`, `not_in`: These methods implement the logic for each operator.
+
+Example usage:
+
+    operator = '>'
+    left_value = RuleValue({'type': 'int', 'value': 30}, {})
+    right_value = RuleValue({'type': 'int', 'value': 20}, {})
+    expression = RuleExpression(operator, left_value, right_value)
+    print(expression.evaluate())  # prints: True
+
+This will create an expression that checks if 30 is greater than 20. The `evaluate` method evaluates the expression and returns the result.
+"""
+
 from .constants import Operators
 from .errors import InvalidRuleExpressionError, InvalidRuleValueError
 from .value import RuleValue

@@ -1,3 +1,24 @@
+"""
+This module, `builder.py`, contains classes for building rules, conditions, and results for a rule engine.
+
+Classes:
+    - Condition: Represents a condition in a rule. It supports logical `and` and `or` operations.
+    - Result: Represents a result of a rule. It supports the `and` operation.
+    - Rule: Represents a rule. A rule consists of an 'if' condition and 'then' and 'else' results. The 'then' and 'else' results are executed when the 'if' condition is met or not met, respectively.
+
+Each class provides a `to_dict` method for converting the object to a dictionary, which can be useful for storing the object in a database or file, or for converting the object to JSON.
+
+The `Rule` class also provides `save_to_file` and `load_from_file` methods for saving the rule to a file and loading the rule from a file, respectively.
+
+Example usage:
+
+    condition = Condition('number', 'in', [1, 2, 3]) & Condition('number', '=', 1) & \
+    Condition('number', '=', 1) | Condition('number', '=', 2)
+    result = Result('xyz', 'str', 'Condition met') & Result('result', 'variable', 'xyz')
+    rule1 = Rule('Complex rule').If(condition).Then(result).Else(result)
+    print(rule1.to_dict())
+"""
+
 import datetime
 import uuid
 
