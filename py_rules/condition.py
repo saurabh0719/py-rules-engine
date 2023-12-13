@@ -1,6 +1,6 @@
-from .value import RuleValue
-from .expression import RuleExpression
 from .errors import InvalidRuleConditionError
+from .expression import RuleExpression
+from .value import RuleValue
 
 
 class RuleCondition:
@@ -34,7 +34,7 @@ class RuleCondition:
         """
         left_value_dict = {
             'type': type(self.context.get(self.variable)).__name__,
-            'value':self.context.get(self.variable)
+            'value': self.context.get(self.variable)
         }
         left_value = RuleValue(left_value_dict, self.context)
         right_value = RuleValue(self.value, self.context)

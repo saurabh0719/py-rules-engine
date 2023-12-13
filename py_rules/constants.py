@@ -4,7 +4,8 @@ class Constants:
     def list_all(cls):
         _cls = cls()
         return [
-            getattr(cls, attr) for attr in dir(_cls) if not callable(getattr(_cls, attr)) and not attr.startswith("__")
+            getattr(cls, attr) for attr in dir(_cls)
+            if not callable(getattr(_cls, attr)) and not attr.startswith("__")
         ]
 
 
