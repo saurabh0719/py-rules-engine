@@ -15,8 +15,8 @@ class TestEngine(unittest.TestCase):
             'number', '>', 1) | Condition('number', '=', 2)
         result = Result('xyz', 'str', 'Condition met') & Result('abc', 'variable', 'str_var')
         rule = Rule('Complex rule').If(condition).Then(result).Else(result)
-        engine = RuleEngine(rule, self.context)
-        self.assertEqual(engine.evaluate(), {"xyz": "Condition met", "abc": "py_rules"})
+        engine = RuleEngine(self.context)
+        self.assertEqual(engine.evaluate(rule), {"xyz": "Condition met", "abc": "py_rules"})
 
     def test_required_parameters(self):
         condition = Condition('a', '=', 2) & Condition('b', '=', 5) & Condition('c', '>', 1)
@@ -28,39 +28,34 @@ class TestEngine(unittest.TestCase):
         condition = Condition('number', '=', 5)
         result = Result('xyz', 'str', 'Condition met')
         rule = Rule('Basic rule').If(condition).Then(result).Else(result)
-        engine = RuleEngine(rule, self.context)
-        self.assertEqual(engine.evaluate(), {"xyz": "Condition met"})
+        engine = RuleEngine(self.context)
+        self.assertEqual(engine.evaluate(rule), {"xyz": "Condition met"})
 
         rule = Rule('Basic rule').If(condition)
-        engine = RuleEngine(rule, self.context)
-        self.assertEqual(engine.evaluate(), True)
+        self.assertEqual(engine.evaluate(rule), True)
 
         condition = Condition('number', '=', 6)
         rule = Rule('Basic rule').If(condition)
-        engine = RuleEngine(rule, self.context)
-        self.assertEqual(engine.evaluate(), False)
+        self.assertEqual(engine.evaluate(rule), False)
 
     def test_multiple_conditions(self):
         condition = Condition('number', '=', 5) & Condition('number', '>', 1)
         result = Result('xyz', 'str', 'Condition met')
         rule = Rule('Multiple conditions').If(condition).Then(result).Else(result)
-        engine = RuleEngine(rule, self.context)
-        self.assertEqual(engine.evaluate(), {"xyz": "Condition met"})
+        engine = RuleEngine(self.context)
+        self.assertEqual(engine.evaluate(rule), {"xyz": "Condition met"})
 
         condition = Condition('number', '=', 5) & Condition('number', '>', 10)
         rule = Rule('Multiple conditions').If(condition).Then(result).Else(result)
-        engine = RuleEngine(rule, self.context)
-        self.assertEqual(engine.evaluate(), {"xyz": "Condition met"})
+        self.assertEqual(engine.evaluate(rule), {"xyz": "Condition met"})
 
         condition = Condition('number', '=', 5) & Condition('number', '<', 10)
         rule = Rule('Multiple conditions').If(condition).Then(result).Else(result)
-        engine = RuleEngine(rule, self.context)
-        self.assertEqual(engine.evaluate(), {"xyz": "Condition met"})
+        self.assertEqual(engine.evaluate(rule), {"xyz": "Condition met"})
 
         condition = Condition('number', '=', 5) & Condition('number', '<', 1)
         rule = Rule('Multiple conditions').If(condition).Then(result).Else(result)
-        engine = RuleEngine(rule, self.context)
-        self.assertEqual(engine.evaluate(), {"xyz": "Condition met"})
+        self.assertEqual(engine.evaluate(rule), {"xyz": "Condition met"})
 
     def test_datetime_expressions(self):
         """
@@ -71,20 +66,17 @@ class TestEngine(unittest.TestCase):
         condition = Condition('date', '=', datetime.date(2020, 1, 1))
         result = Result('xyz', 'str', 'Condition met')
         rule = Rule('Datetime rule').If(condition).Then(result).Else(result)
-        engine = RuleEngine(rule, context)
-        self.assertEqual(engine.evaluate(), {"xyz": "Condition met"})
+        engine = RuleEngine(context)
+        self.assertEqual(engine.evaluate(rule), {"xyz": "Condition met"})
 
         condition = Condition('date', '=', datetime.date(2020, 1, 2))
         rule = Rule('Datetime rule').If(condition).Then(result).Else(result)
-        engine = RuleEngine(rule, context)
-        self.assertEqual(engine.evaluate(), {"xyz": "Condition met"})
+        self.assertEqual(engine.evaluate(rule), {"xyz": "Condition met"})
 
         condition = Condition('date', '=', datetime.date(2019, 1, 1))
         rule = Rule('Datetime rule').If(condition).Then(result).Else(result)
-        engine = RuleEngine(rule, context)
-        self.assertEqual(engine.evaluate(), {"xyz": "Condition met"})
+        self.assertEqual(engine.evaluate(rule), {"xyz": "Condition met"})
 
         condition = Condition('date', '=', datetime.date(2019, 1, 2))
         rule = Rule('Datetime rule').If(condition).Then(result).Else(result)
-        engine = RuleEngine(rule, context)
-        self.assertEqual(engine.evaluate(), {"xyz": "Condition met"})
+        self.assertEqual(engine.evaluate(rule), {"xyz": "Condition met"})

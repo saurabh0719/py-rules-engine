@@ -25,7 +25,6 @@ class RuleParser:
         metadata.pop('type', None)
 
         for key, value in metadata.items():
-            print("key: ", key, "value: ", value)
             setattr(obj, key, value)
 
         if hasattr(obj, 'required_context_parameters'):
