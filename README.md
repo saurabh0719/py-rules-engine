@@ -58,7 +58,7 @@ The `IF-THEN-ELSE` structure is a fundamental part of the rule engine. It allows
 - `ELSE`: This part specifies the result or action that should be returned or performed if the IF condition is not met (i.e., if it evaluates to False). Like the THEN part, it can be a simple value, a complex object, or another rule. The ELSE part is optional; if it's not provided and the IF condition is not met, the rule engine will return False.
 
 
-Every `Rule` object contains the following
+Every `Rule` object's `dict` representation (rule.to_dict()) contains the following
 
 - `metadata`: This section contains metadata about the rule.
 
@@ -101,7 +101,9 @@ See the `examples/` directory for more.
 
 <span id="builder"></span>
 
-## Rule Builder
+## Rule Components
+
+Rule components can be used to build complex Rules with many conditions. The following components are available -
 
 - `Condition`: This class represents a condition in a rule. It can be initialized with a variable, operator, and value, or with a condition dictionary. It supports logical `and` and `or` operations to combine conditions. The `to_dict` method returns a dictionary representation of the condition.
 
