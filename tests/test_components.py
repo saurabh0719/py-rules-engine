@@ -3,7 +3,7 @@ import unittest
 from py_rules.components import Condition, Result, Rule
 
 
-class TestBuilder(unittest.TestCase):
+class TestRuleComponents(unittest.TestCase):
 
     def test_condition(self):
         condition = Condition('number', 'in', [1, 2, 3])
