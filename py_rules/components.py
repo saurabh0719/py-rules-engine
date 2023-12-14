@@ -4,7 +4,8 @@ from abc import ABC, abstractmethod
 
 from .__version__ import __version__
 from .constants import Operators, Types
-from .errors import InvalidRuleConditionError
+from .errors import InvalidRuleConditionError, InvalidRuleError
+from .utils import is_equal_dict
 
 
 class RuleComponent(ABC):
@@ -17,25 +18,45 @@ class RuleComponent(ABC):
         self.args = args
         self.kwargs = kwargs
         self.id = kwargs.get('id') if kwargs.get('id') else str(uuid.uuid4())
+        self.created = str(datetime.datetime.now())
         self.version = kwargs.get('version') if kwargs.get('version') else __version__
         self.required_context_parameters = set()
         self.metadata = None
+
+    def __eq__(self, other: 'RuleComponent') -> bool:
+        return is_equal_dict(self.to_dict(), other.to_dict())
 
     @abstractmethod
     def to_dict(self):
         raise NotImplementedError
 
     def load_metadata(self):
-        return {
-            'version': self.version,
-            'type': self.__class__.__name__,
-            'id': self.id,
-            'created': str(datetime.datetime.now()),
-            'required_context_parameters': list(self.required_context_parameters)
-        }
+        if self.kwargs.get('hide_metadata') is True:
+            self.metadata = None
+        else:
+            self.metadata = {
+                'version': self.version,
+                'type': self.__class__.__name__,
+                'id': self.id,
+                'created': self.created,
+                'required_context_parameters': list(self.required_context_parameters)
+            }
 
 
-class Condition(RuleComponent):
+class RuleConditionComponent(RuleComponent):
+    """
+    Abstract base class for all rule condition components.
+    Each condition component has a unique ID, a version, a set of required context parameters, and optional metadata.
+    """
+
+    def __and__(self, other):
+        return AndCondition(self, other)
+
+    def __or__(self, other):
+        return OrCondition(self, other)
+
+
+class Condition(RuleConditionComponent):
     """
     Represents a condition in a rule.
     A condition has a variable, an operator, and a value.
@@ -55,7 +76,7 @@ class Condition(RuleComponent):
         self.value = self._build_value(value)
         if self.variable is not None:
             self.required_context_parameters.add(variable)
-        self.metadata = self.load_metadata()
+        self.load_metadata()
 
     def __and__(self, other):
         return AndCondition(self, other)
@@ -75,17 +96,18 @@ class Condition(RuleComponent):
             return {'type': type(value).__name__, 'value': value}
 
     def to_dict(self):
-        return {
-            'condition': {
-                'metadata': self.metadata,
-                'variable': self.variable,
-                'operator': self.operator,
-                'value': self.value,
-            }
-        }
+        condition_dict = {'condition': {}}
+        if self.metadata:
+            condition_dict['condition']['metadata'] = self.metadata
+        condition_dict['condition'].update({
+            'variable': self.variable,
+            'operator': self.operator,
+            'value': self.value,
+        })
+        return condition_dict
 
 
-class AndCondition(RuleComponent):
+class AndCondition(RuleConditionComponent):
     """
     Represents a logical 'and' of two conditions.
     An AndCondition has two conditions, and evaluates to True if both conditions are True.
@@ -98,17 +120,11 @@ class AndCondition(RuleComponent):
         self.required_context_parameters = condition1.required_context_parameters.union(
             condition2.required_context_parameters)
 
-    def __and__(self, other):
-        return AndCondition(self, other)
-
-    def __or__(self, other):
-        return OrCondition(self, other)
-
     def to_dict(self):
         return {'and': [self.condition1.to_dict(), self.condition2.to_dict()]}
 
 
-class OrCondition(RuleComponent):
+class OrCondition(RuleConditionComponent):
     """
     Represents a logical 'or' of two conditions.
     An OrCondition has two conditions, and evaluates to True if either condition is True.
@@ -120,12 +136,6 @@ class OrCondition(RuleComponent):
         self.condition2 = condition2
         self.required_context_parameters = condition1.required_context_parameters.union(
             condition2.required_context_parameters)
-
-    def __and__(self, other):
-        return AndCondition(self, other)
-
-    def __or__(self, other):
-        return OrCondition(self, other)
 
     def to_dict(self):
         return {'or': [self.condition1.to_dict(), self.condition2.to_dict()]}
@@ -196,13 +206,13 @@ class Rule(RuleComponent):
         self.if_action: RuleComponent = None
         self.then_action: RuleComponent = None
         self.else_action: RuleComponent = None
-        self.metadata = self.load_metadata()
+        self.load_metadata()
 
     def load_metadata(self) -> dict:
-        metadata = super().load_metadata()
-        metadata['name'] = str(self.name)
-        metadata['parent_id'] = self.parent_id
-        return metadata
+        super().load_metadata()
+        if self.metadata:
+            self.metadata['name'] = str(self.name)
+            self.metadata['parent_id'] = self.parent_id
 
     def set_parent_id(self, parent_id):
         self.parent_id = parent_id
@@ -211,6 +221,7 @@ class Rule(RuleComponent):
     def If(self, condition: Condition) -> 'Rule':
         self.if_action = condition
         self.required_context_parameters.update(condition.required_context_parameters)
+        self.load_metadata()
         return self
 
     def Then(self, obj) -> 'Rule':
@@ -218,6 +229,7 @@ class Rule(RuleComponent):
         if isinstance(obj, Rule):
             self.then_action.set_parent_id(self.id)
         self.required_context_parameters.update(self.then_action.required_context_parameters)
+        self.load_metadata()
         return self
 
     def Else(self, obj) -> 'Rule':
@@ -225,12 +237,21 @@ class Rule(RuleComponent):
         if isinstance(obj, Rule):
             self.else_action.set_parent_id(self.id)
         self.required_context_parameters.update(self.else_action.required_context_parameters)
+        self.load_metadata()
         return self
 
     def to_dict(self):
-        return {
-            'metadata': self.metadata,
-            'if': self.if_action.to_dict() if self.if_action is not None else None,
-            'then': self.then_action.to_dict() if self.then_action is not None else None,
-            'else': self.else_action.to_dict() if self.else_action is not None else None
-        }
+        rule_dict = {}
+        if self.metadata:
+            rule_dict['metadata'] = self.metadata
+
+        if not self.if_action:
+            raise InvalidRuleError('No If action present in rule')
+        rule_dict['if'] = self.if_action.to_dict()
+
+        if self.then_action:
+            rule_dict['then'] = self.then_action.to_dict()
+            if self.else_action:
+                rule_dict['else'] = self.else_action.to_dict()
+
+        return rule_dict

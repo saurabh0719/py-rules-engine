@@ -8,6 +8,8 @@ from .components import Rule
 from .errors import InvalidRuleError
 from .parser import RuleParser
 
+yaml.Dumper.ignore_aliases = lambda *args: True
+
 
 class RuleStorage(ABC):
     """
@@ -48,6 +50,7 @@ class JSONRuleStorage(RuleStorage):
         """
         Load a rule from a JSON file.
         """
+        data = {}
         with open(self.file_path) as f:
             data = json.load(f)
         return self.parser(data).parse()
@@ -82,6 +85,7 @@ class YAMLRuleStorage(RuleStorage):
         """
         Load a rule from a YAML file.
         """
+        data = {}
         with open(self.file_path) as f:
             data = yaml.load(f, Loader=yaml.FullLoader)
         return self.parser(data).parse()
@@ -92,7 +96,7 @@ class YAMLRuleStorage(RuleStorage):
         """
         data = rule.to_dict()
         with open(self.file_path, 'w') as f:
-            yaml.dump(data, f, indent=4)
+            yaml.dump(data, f, default_flow_style=False, indent=4, sort_keys=False)
 
 
 class PickledRuleStorage(RuleStorage):
@@ -111,6 +115,7 @@ class PickledRuleStorage(RuleStorage):
         """
         Load a rule from a Pickle file.
         """
+        data = {}
         with open(self.file_path, 'rb') as f:
             data = pickle.load(f)
         return self.parser(data).parse()

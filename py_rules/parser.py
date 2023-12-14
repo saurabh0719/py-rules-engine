@@ -1,6 +1,5 @@
 from .components import AndCondition, Condition, OrCondition, Result, Rule
 from .errors import InvalidRuleError
-from .utils import validate_version
 
 
 class RuleParser:
@@ -19,23 +18,43 @@ class RuleParser:
 
     def __init__(self, data: dict):
         self.data = data
-        version = self.data.get('metadata', {}).get('version')
-        validate_version(version)
+        self.rule_counter = 0
+
+    def _load_attributes_from_metadata(self, obj, metadata: dict):
+        # sync all properties from the metadata dict into obj attrs
+        metadata.pop('type', None)
+
+        for key, value in metadata.items():
+            print("key: ", key, "value: ", value)
+            setattr(obj, key, value)
+
+        if hasattr(obj, 'required_context_parameters'):
+            obj.required_context_parameters = set(obj.required_context_parameters)
+
+        return obj
 
     def parse(self) -> Rule:
         """
         parse a rule from a dictionary.
         """
-        rule = Rule(self.data.get('metadata', {}).get('name', ''))
-        if 'metadata' in self.data:
-            rule.metadata = self.data.get('metadata', {})
+        metadata = self.data.get('metadata', {})
+        self.rule_counter += 1
+        rule = Rule(metadata.get('name', f'Unnamed Rule {self.rule_counter}'))
+        if metadata:
+            rule = self._load_attributes_from_metadata(rule, metadata)
+            rule.load_metadata()
 
         if self.data.get('if'):
             rule.If(self.parse_component(self.data.get('if')))
+        else:
+            raise InvalidRuleError('No If condition in Rule')
+
         if self.data.get('then'):
             rule.Then(self.parse_component(self.data.get('then')))
-        if self.data.get('else'):
-            rule.Else(self.parse_component(self.data.get('else')))
+            if self.data.get('else'):
+                rule.Else(self.parse_component(self.data.get('else')))
+
+        rule.metadata['required_context_parameters'] = list(rule.required_context_parameters)
         return rule
 
     def parse_value(self, data: dict):
@@ -62,7 +81,9 @@ class RuleParser:
             value = self.parse_value(value) if isinstance(value, dict) else value
             condition = Condition(condition_data.get('variable'), condition_data.get('operator'), value)
             if 'metadata' in condition_data:
-                condition.metadata = condition_data.get('metadata', {})
+                metadata = condition_data.get('metadata', {})
+                condition = self._load_attributes_from_metadata(condition, metadata)
+                condition.load_metadata()
             return condition
 
         elif 'and' in data:
