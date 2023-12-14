@@ -1,23 +1,3 @@
-"""
-This module, `components.py`, contains component classes for building rules, conditions, and results for a rule engine.
-
-Classes:
-    - Condition: Represents a condition in a rule. It supports logical `and` and `or` operations.
-    - Result: Represents a result of a rule. It supports the `and` operation.
-    - Rule: Represents a rule. A rule consists of an 'if' condition and 'then' and 'else' results. The 'then' and 'else' results are executed when the 'if' condition is met or not met, respectively.
-
-Each class provides a `to_dict` method for converting the object to a dictionary, which can be useful for storing the object in a database or file, or for converting the object to JSON.
-
-The `Rule` class also provides `save_to_file` and `load_from_file` methods for saving the rule to a file and loading the rule from a file, respectively.
-
-Example usage:
-    condition = Condition('number', 'in', [1, 2, 3]) & Condition('number', '=', 1) & \
-    Condition('number', '=', 1) | Condition('number', '=', 2)
-    result = Result('xyz', 'str', 'Condition met') & Result('result', 'variable', 'xyz')
-    rule1 = Rule('Complex rule').If(condition).Then(result).Else(result)
-    print(rule1.to_dict())
-"""
-
 import datetime
 import uuid
 from abc import ABC, abstractmethod
@@ -28,6 +8,10 @@ from .errors import InvalidRuleConditionError
 
 
 class RuleComponent(ABC):
+    """
+    Abstract base class for all rule components.
+    Each component has a unique ID, a version, a set of required context parameters, and optional metadata.
+    """
 
     def __init__(self, *args, **kwargs):
         self.args = args
@@ -52,6 +36,13 @@ class RuleComponent(ABC):
 
 
 class Condition(RuleComponent):
+    """
+    Represents a condition in a rule.
+    A condition has a variable, an operator, and a value.
+    The variable is a string that represents a parameter in the context.
+    The operator is a string that represents a comparison operator.
+    The value is the value to compare the variable to.
+    """
 
     def __init__(self, variable=None, operator=None, value=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -95,6 +86,10 @@ class Condition(RuleComponent):
 
 
 class AndCondition(RuleComponent):
+    """
+    Represents a logical 'and' of two conditions.
+    An AndCondition has two conditions, and evaluates to True if both conditions are True.
+    """
 
     def __init__(self, condition1: Condition, condition2: Condition):
         super().__init__()
@@ -114,6 +109,10 @@ class AndCondition(RuleComponent):
 
 
 class OrCondition(RuleComponent):
+    """
+    Represents a logical 'or' of two conditions.
+    An OrCondition has two conditions, and evaluates to True if either condition is True.
+    """
 
     def __init__(self, condition1: Condition, condition2: Condition):
         super().__init__()
@@ -133,6 +132,13 @@ class OrCondition(RuleComponent):
 
 
 class Result(RuleComponent):
+    """
+    Represents a result of a rule.
+    A result has a key, a type, and a value.
+    The key is a string that represents a parameter in the context.
+    The type is a string that represents the type of the value.
+    The value is the value to set the parameter to if the rule is applied.
+    """
 
     def __init__(self, key=None, vtype=None, value=None, result=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -152,6 +158,10 @@ class Result(RuleComponent):
 
 
 class AndResult(RuleComponent):
+    """
+    Represents a logical 'and' of two results.
+    An AndResult has two results, and evaluates to a combined result if both results are True.
+    """
 
     def __init__(self, result1, result2):
         super().__init__()
@@ -171,6 +181,13 @@ class AndResult(RuleComponent):
 
 
 class Rule(RuleComponent):
+    """
+    Represents a rule.
+    A rule has a name, an 'if' condition, a 'then' result, and an optional 'else' result.
+    The 'if' condition is a Condition that is evaluated to determine whether to apply the rule.
+    The 'then' result is a Result that is applied if the 'if' condition is True.
+    The 'else' result is a Result that is applied if the 'if' condition is False.
+    """
 
     def __init__(self, name, *args, **kwargs):
         super().__init__(*args, **kwargs)
