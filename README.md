@@ -20,7 +20,6 @@
 - **0 dependencies**: It is written in pure Python, making it easy to install and use without any 3rd-party dependency.
 
 <span id="contents"></span>
-
 ## Table of Contents :
 * [Installation](#installation)
 * [Rule structure & definition](#basics)
