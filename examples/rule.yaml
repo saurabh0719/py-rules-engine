@@ -1,16 +1,26 @@
-else:
-    else: null
-    if:
-        condition:
-            metadata: &id001
-                created: '2023-12-14 21:27:01.828222'
-                id: 3173872f-404d-467b-aef3-507d28a5f53d
+metadata:
+    version: 0.1.0
+    type: Rule
+    id: 9ddb7f6e-a730-413e-92aa-975325c701d1
+    created: '2023-12-15 04:28:40.252054'
+    required_context_parameters:
+    - number
+    - xyz
+    name: Complex rule
+    parent_id: null
+if:
+    and:
+    -   condition:
+            metadata:
+                version: 0.1.0
+                type: Condition
+                id: 78f77078-44eb-42c2-9dbb-21fa2248647d
+                created: '2023-12-15 04:28:40.251929'
                 required_context_parameters:
                 - number
-                type: Condition
-                version: 0.1.0
+            variable: number
             operator: in
-            value: &id002
+            value:
                 type: list
                 value:
                 -   type: int
@@ -19,53 +29,59 @@ else:
                     value: 2
                 -   type: int
                     value: 3
+    -   condition:
+            metadata:
+                version: 0.1.0
+                type: Condition
+                id: c8de2c87-eb3d-4f1f-b0ec-5bf5d77ce424
+                created: '2023-12-15 04:28:40.251982'
+                required_context_parameters:
+                - number
             variable: number
+            operator: '='
+            value:
+                type: int
+                value: 1
+then:
+    result:
+        xyz:
+            type: str
+            value: Condition met
+        result:
+            type: variable
+            value: xyz
+else:
     metadata:
-        created: '2023-12-14 21:27:01.828282'
-        id: 00757c4b-cae1-4b9c-8480-927a48bcc4a8
+        version: 0.1.0
+        type: Rule
+        id: b3e968cc-ff1d-4fe2-a720-aa3b0ebf0548
+        created: '2023-12-15 04:28:40.252036'
+        required_context_parameters:
+        - number
         name: Nested rule
         parent_id: null
-        required_context_parameters: []
-        type: Rule
-        version: 0.1.0
+    if:
+        condition:
+            metadata:
+                version: 0.1.0
+                type: Condition
+                id: 78f77078-44eb-42c2-9dbb-21fa2248647d
+                created: '2023-12-15 04:28:40.251929'
+                required_context_parameters:
+                - number
+            variable: number
+            operator: in
+            value:
+                type: list
+                value:
+                -   type: int
+                    value: 1
+                -   type: int
+                    value: 2
+                -   type: int
+                    value: 3
     then:
         result:
             xyz:
                 type: str
                 value: Condition met
-if:
-    and:
-    -   condition:
-            metadata: *id001
-            operator: in
-            value: *id002
-            variable: number
-    -   condition:
-            metadata:
-                created: '2023-12-14 21:27:01.828252'
-                id: b31483ed-e103-474f-b04e-70b2aad71beb
-                required_context_parameters:
-                - number
-                type: Condition
-                version: 0.1.0
-            operator: '='
-            value:
-                type: int
-                value: 1
-            variable: number
-metadata:
-    created: '2023-12-14 21:27:01.828293'
-    id: cfb77a2b-a05d-4f9d-be9d-ce442c51b624
-    name: Complex rule
-    parent_id: null
-    required_context_parameters: []
-    type: Rule
-    version: 0.1.0
-then:
-    result:
-        result:
-            type: variable
-            value: xyz
-        xyz:
-            type: str
-            value: Condition met
