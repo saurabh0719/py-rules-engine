@@ -134,7 +134,7 @@ Output -
 
 {
     "metadata": {
-        "version": "0.1.0",
+        "version": "0.2.0",
         "type": "Rule",
         "id": "5dbca846-5e59-4b6c-bdbf-9602d68c79ff",
         "created": "2023-12-15 04:49:45.183531",
@@ -145,7 +145,7 @@ Output -
     "if": {
         "condition": {
             "metadata": {
-                "version": "0.1.0",
+                "version": "0.2.0",
                 "type": "Condition",
                 "id": "14950c65-3741-40da-ac13-e5cf1a0c49ce",
                 "created": "2023-12-15 04:49:45.183438",
@@ -221,7 +221,7 @@ assert complex_rule == json_rule == yaml_rule
 
 {
     "metadata": {
-        "version": "0.1.0",
+        "version": "0.2.0",
         "type": "Rule",
         "id": "8330dd39-a0a4-4f21-aab4-0f8e35924c74",
         "created": "2023-12-15 04:54:00.349206",
@@ -237,7 +237,7 @@ assert complex_rule == json_rule == yaml_rule
             {
                 "condition": {
                     "metadata": {
-                        "version": "0.1.0",
+                        "version": "0.2.0",
                         "type": "Condition",
                         "id": "16a74acf-3dfd-4c8f-a280-50dc3970455c",
                         "created": "2023-12-15 04:54:00.349063",
@@ -269,7 +269,7 @@ assert complex_rule == json_rule == yaml_rule
             {
                 "condition": {
                     "metadata": {
-                        "version": "0.1.0",
+                        "version": "0.2.0",
                         "type": "Condition",
                         "id": "137af61f-16af-44b9-8c49-a1c61912704b",
                         "created": "2023-12-15 04:54:00.349134",
@@ -301,7 +301,7 @@ assert complex_rule == json_rule == yaml_rule
     },
     "else": {
         "metadata": {
-            "version": "0.1.0",
+            "version": "0.2.0",
             "type": "Rule",
             "id": "41ad9aa7-d072-49d1-9336-4186a3a6b69c",
             "created": "2023-12-15 04:54:00.349189",
@@ -314,7 +314,7 @@ assert complex_rule == json_rule == yaml_rule
         "if": {
             "condition": {
                 "metadata": {
-                    "version": "0.1.0",
+                    "version": "0.2.0",
                     "type": "Condition",
                     "id": "16a74acf-3dfd-4c8f-a280-50dc3970455c",
                     "created": "2023-12-15 04:54:00.349063",
@@ -363,7 +363,7 @@ assert complex_rule == json_rule == yaml_rule
 ```yaml
 
 metadata:
-    version: 0.1.0
+    version: 0.2.0
     type: Rule
     id: 8330dd39-a0a4-4f21-aab4-0f8e35924c74
     created: '2023-12-15 04:54:00.349206'
@@ -376,7 +376,7 @@ if:
     and:
     -   condition:
             metadata:
-                version: 0.1.0
+                version: 0.2.0
                 type: Condition
                 id: 16a74acf-3dfd-4c8f-a280-50dc3970455c
                 created: '2023-12-15 04:54:00.349063'
@@ -395,7 +395,7 @@ if:
                     value: 3
     -   condition:
             metadata:
-                version: 0.1.0
+                version: 0.2.0
                 type: Condition
                 id: 137af61f-16af-44b9-8c49-a1c61912704b
                 created: '2023-12-15 04:54:00.349134'
@@ -416,7 +416,7 @@ then:
             value: xyz
 else:
     metadata:
-        version: 0.1.0
+        version: 0.2.0
         type: Rule
         id: 41ad9aa7-d072-49d1-9336-4186a3a6b69c
         created: '2023-12-15 04:54:00.349189'
@@ -427,7 +427,7 @@ else:
     if:
         condition:
             metadata:
-                version: 0.1.0
+                version: 0.2.0
                 type: Condition
                 id: 16a74acf-3dfd-4c8f-a280-50dc3970455c
                 created: '2023-12-15 04:54:00.349063'
@@ -489,7 +489,7 @@ Here's the equivalent rule in JSON format:
 ```json
 {
     "metadata": {
-        "version": "0.1.0",
+        "version": "0.2.0",
         "type": "Rule",
         "id": "7f2a4893-322c-4973-8e41-c3930e37648b",
         "created": "2023-12-15 04:57:33.071026",
@@ -500,7 +500,7 @@ Here's the equivalent rule in JSON format:
     "if": {
         "condition": {
             "metadata": {
-                "version": "0.1.0",
+                "version": "0.2.0",
                 "type": "Condition",
                 "id": "515a3a0e-6a45-4848-9ea9-8202e66372cf",
                 "created": "2023-12-15 04:57:33.070916",
@@ -513,7 +513,7 @@ Here's the equivalent rule in JSON format:
     },
     "then": {
         "metadata": {
-            "version": "0.1.0",
+            "version": "0.2.0",
             "type": "Rule",
             "id": "7c045ec9-c262-4c6c-8b0f-34cc773d4f41",
             "created": "2023-12-15 04:57:33.071017",
@@ -524,7 +524,7 @@ Here's the equivalent rule in JSON format:
         "if": {
             "condition": {
                 "metadata": {
-                    "version": "0.1.0",
+                    "version": "0.2.0",
                     "type": "Condition",
                     "id": "ddc1e0f2-54a5-4c4f-aedd-2f6db69741dc",
                     "created": "2023-12-15 04:57:33.070964",

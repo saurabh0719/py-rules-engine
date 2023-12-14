@@ -1,5 +1,5 @@
 metadata:
-    version: 0.1.0
+    version: 0.2.0
     type: Rule
     id: 9ddb7f6e-a730-413e-92aa-975325c701d1
     created: '2023-12-15 04:28:40.252054'
@@ -12,7 +12,7 @@ if:
     and:
     -   condition:
             metadata:
-                version: 0.1.0
+                version: 0.2.0
                 type: Condition
                 id: 78f77078-44eb-42c2-9dbb-21fa2248647d
                 created: '2023-12-15 04:28:40.251929'
@@ -31,7 +31,7 @@ if:
                     value: 3
     -   condition:
             metadata:
-                version: 0.1.0
+                version: 0.2.0
                 type: Condition
                 id: c8de2c87-eb3d-4f1f-b0ec-5bf5d77ce424
                 created: '2023-12-15 04:28:40.251982'
@@ -52,7 +52,7 @@ then:
             value: xyz
 else:
     metadata:
-        version: 0.1.0
+        version: 0.2.0
         type: Rule
         id: b3e968cc-ff1d-4fe2-a720-aa3b0ebf0548
         created: '2023-12-15 04:28:40.252036'
@@ -63,7 +63,7 @@ else:
     if:
         condition:
             metadata:
-                version: 0.1.0
+                version: 0.2.0
                 type: Condition
                 id: 78f77078-44eb-42c2-9dbb-21fa2248647d
                 created: '2023-12-15 04:28:40.251929'
