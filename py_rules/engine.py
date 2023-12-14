@@ -21,9 +21,11 @@ Example usage:
 This will create a rule that checks if the temperature is greater than 30. The context provides the actual temperature. The `RuleEngine` evaluates the rule in the given context and returns the result of the rule.
 """
 
-from .builder import Rule
+from .__version__ import __version__
+from .components import Rule
 from .condition import RuleCondition
 from .errors import InvalidRuleConditionError, InvalidRuleError
+from .utils import validate_version
 
 
 class RuleEngine:
@@ -39,8 +41,10 @@ class RuleEngine:
             rule (Rule): The rule to evaluate
             context (dict): The context in which to evaluate the rule.
         """
+        self.version = __version__
         self.context = context
         self.rule = rule
+        validate_version(self.rule.version)
         self._validate_context()
 
     def _validate_context(self) -> None:
@@ -50,10 +54,9 @@ class RuleEngine:
         if not isinstance(self.context, dict):
             raise InvalidRuleError('Context must be a dict')
 
-        if 'required_context_parameters' in self.rule.rule_metadata:
-            for parameter in self.rule.rule_metadata.get('required_context_parameters'):
-                if parameter not in self.context:
-                    raise InvalidRuleError(f'Context is missing required parameter: {parameter}')
+        for parameter in self.rule.required_context_parameters:
+            if parameter not in self.context:
+                raise InvalidRuleError(f'Context is missing required parameter: {parameter}')
 
     def evaluate_result(self, action: dict, default=False) -> dict:
         """
@@ -114,9 +117,10 @@ class RuleEngine:
         - If 'then' is absent, the rule returns True if the condition is met, else False.
         - If 'else' is absent, the rule returns the result of 'then' if the condition is met, else False.
         """
-        if_condition: dict = self.rule.data.get('if')
-        then_action: dict = self.rule.data.get('then')
-        else_action: dict = self.rule.data.get('else')
+        rule_data = self.rule.to_dict()
+        if_condition: dict = rule_data.get('if')
+        then_action: dict = rule_data.get('then')
+        else_action: dict = rule_data.get('else')
 
         if self.evaluate_condition_block(if_condition):
             if then_action and then_action.get('if'):

@@ -1,15 +1,10 @@
-import json
+from .__version__ import __version__
+from .errors import InvalidRuleError
 
 
-def load_from_json(file_path) -> dict:
+def validate_version(version):
     """
-    Load a rules from a JSON file.
+    Validate a rule version.
     """
-    with open(file_path) as f:
-        data = json.load(f)
-    return data
-
-
-def save_dict_to_json(file_path, data: dict):
-    with open(file_path, 'w') as f:
-        json.dump(data, f)
+    if version != __version__:
+        raise InvalidRuleError('Invalid version')

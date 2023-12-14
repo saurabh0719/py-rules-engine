@@ -1,0 +1,130 @@
+{
+    "metadata": {
+        "version": "0.1.0",
+        "type": "Rule",
+        "id": "cfb77a2b-a05d-4f9d-be9d-ce442c51b624",
+        "created": "2023-12-14 21:27:01.828293",
+        "required_context_parameters": [],
+        "name": "Complex rule",
+        "parent_id": null
+    },
+    "if": {
+        "and": [
+            {
+                "condition": {
+                    "metadata": {
+                        "version": "0.1.0",
+                        "type": "Condition",
+                        "id": "3173872f-404d-467b-aef3-507d28a5f53d",
+                        "created": "2023-12-14 21:27:01.828222",
+                        "required_context_parameters": [
+                            "number"
+                        ]
+                    },
+                    "variable": "number",
+                    "operator": "in",
+                    "value": {
+                        "type": "list",
+                        "value": [
+                            {
+                                "type": "int",
+                                "value": 1
+                            },
+                            {
+                                "type": "int",
+                                "value": 2
+                            },
+                            {
+                                "type": "int",
+                                "value": 3
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "condition": {
+                    "metadata": {
+                        "version": "0.1.0",
+                        "type": "Condition",
+                        "id": "b31483ed-e103-474f-b04e-70b2aad71beb",
+                        "created": "2023-12-14 21:27:01.828252",
+                        "required_context_parameters": [
+                            "number"
+                        ]
+                    },
+                    "variable": "number",
+                    "operator": "=",
+                    "value": {
+                        "type": "int",
+                        "value": 1
+                    }
+                }
+            }
+        ]
+    },
+    "then": {
+        "result": {
+            "xyz": {
+                "type": "str",
+                "value": "Condition met"
+            },
+            "result": {
+                "type": "variable",
+                "value": "xyz"
+            }
+        }
+    },
+    "else": {
+        "metadata": {
+            "version": "0.1.0",
+            "type": "Rule",
+            "id": "00757c4b-cae1-4b9c-8480-927a48bcc4a8",
+            "created": "2023-12-14 21:27:01.828282",
+            "required_context_parameters": [],
+            "name": "Nested rule",
+            "parent_id": null
+        },
+        "if": {
+            "condition": {
+                "metadata": {
+                    "version": "0.1.0",
+                    "type": "Condition",
+                    "id": "3173872f-404d-467b-aef3-507d28a5f53d",
+                    "created": "2023-12-14 21:27:01.828222",
+                    "required_context_parameters": [
+                        "number"
+                    ]
+                },
+                "variable": "number",
+                "operator": "in",
+                "value": {
+                    "type": "list",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 1
+                        },
+                        {
+                            "type": "int",
+                            "value": 2
+                        },
+                        {
+                            "type": "int",
+                            "value": 3
+                        }
+                    ]
+                }
+            }
+        },
+        "then": {
+            "result": {
+                "xyz": {
+                    "type": "str",
+                    "value": "Condition met"
+                }
+            }
+        },
+        "else": null
+    }
+}

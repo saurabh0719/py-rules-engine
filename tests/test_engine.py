@@ -1,7 +1,7 @@
 import datetime
 import unittest
 
-from py_rules.builder import Condition, Result, Rule
+from py_rules.components import Condition, Result, Rule
 from py_rules.engine import RuleEngine
 
 
@@ -22,7 +22,7 @@ class TestEngine(unittest.TestCase):
         condition = Condition('a', '=', 2) & Condition('b', '=', 5) & Condition('c', '>', 1)
         result = Result('abc', 'variable', 'str_var')
         rule = Rule('Complex rule').If(condition).Then(result).Else(result)
-        self.assertEqual(len(set(rule.rule_metadata.get('required_context_parameters', []))), 3)
+        self.assertEqual(len(rule.required_context_parameters), 4)
 
     def test_basic_rules(self):
         condition = Condition('number', '=', 5)

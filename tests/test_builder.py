@@ -1,6 +1,6 @@
 import unittest
 
-from py_rules.builder import Condition, Result, Rule
+from py_rules.components import Condition, Result, Rule
 
 
 class TestBuilder(unittest.TestCase):
@@ -10,6 +10,7 @@ class TestBuilder(unittest.TestCase):
         self.assertEqual(
             condition.to_dict(), {
                 'condition': {
+                    'metadata': condition.metadata,
                     'variable': 'number',
                     'operator': 'in',
                     'value': {
@@ -48,6 +49,6 @@ class TestBuilder(unittest.TestCase):
         result = Result('xyz', 'str', 'Condition met') & Result('result', 'variable', 'xyz')
         rule = Rule('rule-one').If(condition).Then(result).Else(result)
         dict_repr = rule.to_dict()
-        metadata = dict_repr.pop('rule_metadata')
+        metadata = dict_repr.pop('metadata')
         self.assertEqual(metadata['name'], 'rule-one')
         self.assertEqual(dict_repr, {'if': condition.to_dict(), 'then': result.to_dict(), 'else': result.to_dict()})
