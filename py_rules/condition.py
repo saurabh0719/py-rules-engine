@@ -36,7 +36,7 @@ class RuleValue:
         if not self.vtype:
             raise InvalidRuleValueError('Missing type in rule value')
 
-        self.type_map = {
+        self.type_to_parser_map = {
             Types.BOOLEAN: bool,
             Types.STRING: str,
             Types.INTEGER: int,
@@ -49,7 +49,7 @@ class RuleValue:
             Types.VARIABLE: self.context.get
         }
 
-        if self.vtype not in self.type_map:
+        if self.vtype not in self.type_to_parser_map:
             raise InvalidRuleValueTypeError(f'Invalid type in rule value: {self.vtype}')
 
     def _parse_list(self, value):
@@ -65,9 +65,9 @@ class RuleValue:
         Returns:
             The parsed value.
         """
-        parse_func = self.type_map.get(self.vtype)
-        if parse_func:
-            return parse_func(self.value)
+        parser = self.type_to_parser_map.get(self.vtype)
+        if parser:
+            return parser(self.value)
         else:
             raise InvalidRuleValueError(f'Invalid type: {self.vtype}')
 
@@ -102,13 +102,13 @@ class RuleExpression:
         self.right_value = right_value
 
         self.operator_to_handler_map = {
-            Operators.EQUAL: self.equal,
-            Operators.DOUBLE_EQUAL: self.equal,
-            Operators.LESS_THAN: self.less_than,
-            Operators.GREATER_THAN: self.greater_than,
-            Operators.LESS_THAN_OR_EQUAL: self.less_than_equal,
-            Operators.GREATER_THAN_OR_EQUAL: self.greater_than_equal,
-            Operators.NOT_EQUAL: self.not_equal,
+            Operators.EQUAL: lambda left, right: left == right,
+            Operators.DOUBLE_EQUAL: lambda left, right: left == right,
+            Operators.LESS_THAN: lambda left, right: left < right,
+            Operators.GREATER_THAN: lambda left, right: left > right,
+            Operators.LESS_THAN_OR_EQUAL: lambda left, right: left <= right,
+            Operators.GREATER_THAN_OR_EQUAL: lambda left, right: left >= right,
+            Operators.NOT_EQUAL: lambda left, right: left != right,
             Operators.IN: self.in_,
             Operators.NOT_IN: self.not_in,
         }
@@ -135,24 +135,6 @@ class RuleExpression:
         except KeyError:
             raise InvalidRuleExpressionError(
                 f'Invalid expression: {self.left_value} {self.operator} {self.right_value}')
-
-    def equal(self, left_value, right_value) -> bool:
-        return left_value == right_value
-
-    def less_than(self, left_value, right_value) -> bool:
-        return left_value < right_value
-
-    def greater_than(self, left_value, right_value) -> bool:
-        return left_value > right_value
-
-    def less_than_equal(self, left_value, right_value) -> bool:
-        return left_value <= right_value
-
-    def greater_than_equal(self, left_value, right_value) -> bool:
-        return left_value >= right_value
-
-    def not_equal(self, left_value, right_value) -> bool:
-        return left_value != right_value
 
     def in_(self, left_value, right_value) -> bool:
         if not isinstance(right_value, list):
