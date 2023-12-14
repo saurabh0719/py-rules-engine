@@ -19,7 +19,7 @@
 
 - **0 dependencies**: It is written in pure Python, making it easy to install and use without any 3rd-party dependency.
 
-<span id="contents"></span>
+<span id="table-of-contents"></span>
 ## Table of Contents :
 * [Installation](#installation)
 * [Rule structure & definition](#basics)
@@ -31,7 +31,6 @@
 
 
 <span id="installation"></span>
-
 ## Installation
 You can install `py-rules-engine` using pip:
 
@@ -43,7 +42,6 @@ pip install py-rules-engine
 
 
 <span id="basics"></span>
-
 ## Rule structure & definition
 
 This rule-engine follows the `IF-THEN-ELSE` pattern.
@@ -99,7 +97,6 @@ See the `examples/` directory for more.
 <br>
 
 <span id="builder"></span>
-
 ## Rule Components
 
 Rule components can be used to build complex Rules with many conditions. The following components are available -
@@ -170,7 +167,6 @@ This will create a rule that checks if the temperature is greater than 30 and re
 
 
 <span id="storage"></span>
-
 ## Rule parsing and storage
 
 
@@ -547,7 +543,6 @@ Here's the equivalent rule in JSON format:
 <br>
 
 <span id="engine"></span>
-
 ## Rule engine and evaluation
 
 The `RuleEngine` class is used to evaluate a parsed rule. It takes a `Rule` object and a context (a dictionary) as input. The context is used to evaluate the conditions in the rule.
@@ -623,7 +618,6 @@ In this example, the first rule checks if the temperature is greater than 30, an
 <br>
 
 <span id="tests"></span>
-
 ## Tests
 
 Install all dev dependencies
@@ -640,7 +634,6 @@ python -m unittest -v
 
 
 <span id="todo"></span>
-
 ## To do
 
 - Pass a global config dictionary from `RuleEngine` to control the following -
