@@ -33,7 +33,7 @@ yaml_rule = YAMLRuleStorage('rule.yaml').load()
 pickle_rule = PickledRuleStorage('rule.pkl').load()
 
 # Assert that the loaded rules are equal to the original rule
-# assert complex_rule == json_rule #== yaml_rule == pickle_rule
+assert complex_rule == json_rule == yaml_rule == pickle_rule
 
 # Print the dictionary representation of each rule
 print("\nOriginal rule:", complex_rule.to_dict())
