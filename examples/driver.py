@@ -1,6 +1,6 @@
 from py_rules.components import Condition, Result, Rule
 from py_rules.engine import RuleEngine
-from py_rules.storages import JSONRuleStorage, PickledRuleStorage, YAMLRuleStorage
+from py_rules.storages import JSONRuleStorage, PickledRuleStorage
 
 # Define conditions
 condition1 = Condition('number', 'in', [1, 2, 3])
@@ -24,22 +24,18 @@ complex_rule = Rule('Complex rule').If(combined_condition).Then(combined_result)
 
 # Store the complex rule in different formats
 JSONRuleStorage('rule.json').store(complex_rule)
-YAMLRuleStorage('rule.yaml').store(complex_rule)
 PickledRuleStorage('rule.pkl').store(complex_rule)
 
 # Load the complex rule from each format
 json_rule = JSONRuleStorage('rule.json').load()
-yaml_rule = YAMLRuleStorage('rule.yaml').load()
 pickle_rule = PickledRuleStorage('rule.pkl').load()
 
 # Assert that the loaded rules are equal to the original rule
-assert complex_rule == json_rule == yaml_rule == pickle_rule
+assert complex_rule == json_rule == pickle_rule
 
 # Print the dictionary representation of each rule
 print("\nOriginal rule:", complex_rule.to_dict())
 print("\nJSON loaded rule:", json_rule.to_dict())
-assert complex_rule == json_rule  #== yaml_rule == pickle_rule
-print("\nYAML loaded rule:", yaml_rule.to_dict())
 print("\nPickle loaded rule:", pickle_rule.to_dict())
 
 # Hide metadata in the dictionary representation of the rule
