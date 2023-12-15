@@ -3,21 +3,15 @@
 
 ## Introduction
 
-`py-rules-engine` is a simple, yet powerful rules engine written in pure Python. It allows you to define complex logical conditions and actions, either via a json file or through pythonic functions.
+`py-rules-engine` is a robust, Python-based rules engine that enables the creation of intricate logical conditions and actions. Key features include:
 
-- **Complex Logical Conditions**: It allows you to define complex logical conditions using and, or, and not operations.
+- **Complex Logical Conditions**: Define intricate conditions using logical operators.
 
-- **Pythonic Rule Builder**: It provides a Pythonic interface for building rules, making it easy to define rules in your Python code.
-
-- **File storage & serialization support**: It allows you to define rules in JSON/YAML format and load them for evaluation. This makes it easy to store, configure, and share rules.
-
-- **Ease of Shifting**: One of the standout features of py-rules is the ease of shifting between a Python rule builder and storing/configuring rules in other formats. This flexibility allows you to choose the most convenient way to define and manage your rules.
-
-- **Nested Rules**: It supports nested rules, allowing you to create complex rule structures with multiple levels of conditions.
-
-- **Rule Evaluation**: It provides a rule engine for evaluating rules in a given context.
-
-- **0 dependencies**: It is written in pure Python, making it easy to install and use without any 3rd-party dependency.
+- **Pythonic Rule Builder**: Utilize a Pythonic interface for easy rule definition.
+- **Flexible Rule Management**: Store, configure, and share rules in JSON/YAML format, with seamless shifting between Python rule builder and other formats.
+- **Nested Rules**: Create multi-level rule structures.
+- **Rule Evaluation**: Evaluate rules in a given context with a built-in rule engine.
+- **Zero Dependencies**: Pure Python implementation for easy installation and use.
 
 
 Example usage -
@@ -521,14 +515,55 @@ Storing & loading rules from persistent storage enable reuse of rules across dif
 
 The `RuleStorage` class is an abstract base class that defines the common interface for all storage classes. It has two abstract methods: `load` and `store`. Any class that inherits from `RuleStorage` must implement these methods. The `RuleStorage` class also has a RuleParser object that is used to parse a rule **after it is loaded into a `dictionary`** format.
 
-The `JSONRuleStorage`, `YAMLRuleStorage`, and `PickledRuleStorage` classes are concrete classes that inherit from RuleStorage and implement the load and store methods. Each class is designed to work with a specific file format.
+The `JSONRuleStorage` and `PickledRuleStorage` classes are concrete classes that inherit from RuleStorage and implement the load and store methods. Each class is designed to work with a specific file format.
 
 Each class also validates the file type in its constructor to ensure that it matches the expected file type. If the file type is not valid, it raises an `InvalidRuleError`.
 
+You can also create your own `RuleStorage` class, as shown in the example below for `yaml` files -
+
 ```python
+import yaml
 
 from py_rules.components import Condition, Result, Rule
-from py_rules.storages import JSONRuleStorage, PickledRuleStorage, YAMLRuleStorage
+from py_rules.storages import RuleStorage, JSONRuleStorage, PickledRuleStorage
+
+yaml.Dumper.ignore_aliases = lambda *args: True
+
+# CUSTOM Yaml Storage
+class YAMLRuleStorage(RuleStorage):
+    """
+    RuleStorage class for YAML files.
+    """
+
+    format = 'yaml'
+
+    def __init__(self, file_path):
+        """
+        Initialize the loader with a file_path.
+        """
+        super().__init__()
+        self.file_path = file_path
+        # validate that the file_path is valid and is a yaml file
+        if not self.file_path.endswith('.yaml'):
+            raise InvalidRuleError('Invalid file type. Only YAML files are supported.')
+
+    def load(self):
+        """
+        Load a rule from a YAML file.
+        """
+        data = {}
+        with open(self.file_path) as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+        return self.parser.parse(data)
+
+    def store(self, rule):
+        """
+        Store a rule in a YAML file.
+        """
+        data = rule.to_dict()
+        with open(self.file_path, 'w') as f:
+            yaml.dump(data, f, default_flow_style=False, indent=4, sort_keys=False)
+
 
 # Define conditions
 condition1 = Condition('number', 'in', [1, 2, 3])

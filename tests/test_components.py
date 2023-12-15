@@ -2,7 +2,7 @@ import tempfile
 import unittest
 
 from py_rules.components import Condition, Result, Rule
-from py_rules.storages import JSONRuleStorage, PickledRuleStorage, YAMLRuleStorage
+from py_rules.storages import JSONRuleStorage, PickledRuleStorage
 
 
 class TestRuleComponents(unittest.TestCase):
@@ -63,20 +63,15 @@ class TestRuleComponents(unittest.TestCase):
 
         # Create temporary files
         with tempfile.NamedTemporaryFile(suffix=".json", delete=True) as json_file, \
-            tempfile.NamedTemporaryFile(suffix=".yaml", delete=True) as yaml_file, \
             tempfile.NamedTemporaryFile(suffix=".pickle", delete=True) as pickle_file:
 
             # Store the rule in JSON format
             JSONRuleStorage(json_file.name).store(rule)
             json_loaded_rule = JSONRuleStorage(json_file.name).load()
 
-            # Store the rule in YAML format
-            YAMLRuleStorage(yaml_file.name).store(rule)
-            yaml_loaded_rule = YAMLRuleStorage(yaml_file.name).load()
-
             # Store the rule in Pickle format
             PickledRuleStorage(pickle_file.name).store(rule)
             pickle_loaded_rule = PickledRuleStorage(pickle_file.name).load()
 
             # Assert that the loaded rule is equal to the original rule
-            assert rule == json_loaded_rule == yaml_loaded_rule == pickle_loaded_rule
+            assert rule == json_loaded_rule == pickle_loaded_rule

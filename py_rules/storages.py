@@ -2,13 +2,9 @@ import json
 import pickle
 from abc import ABC, abstractmethod
 
-import yaml
-
 from .components import Rule
 from .errors import InvalidRuleError
 from .parser import RuleParser
-
-yaml.Dumper.ignore_aliases = lambda *args: True
 
 
 class RuleStorage(ABC):
@@ -62,41 +58,6 @@ class JSONRuleStorage(RuleStorage):
         data = rule.to_dict()
         with open(self.file_path, 'w') as f:
             json.dump(data, f, indent=4)
-
-
-class YAMLRuleStorage(RuleStorage):
-    """
-    RuleStorage class for YAML files.
-    """
-
-    format = 'yaml'
-
-    def __init__(self, file_path):
-        """
-        Initialize the loader with a file_path.
-        """
-        super().__init__()
-        self.file_path = file_path
-        # validate that the file_path is valid and is a yaml file
-        if not self.file_path.endswith('.yaml'):
-            raise InvalidRuleError('Invalid file type. Only YAML files are supported.')
-
-    def load(self):
-        """
-        Load a rule from a YAML file.
-        """
-        data = {}
-        with open(self.file_path) as f:
-            data = yaml.load(f, Loader=yaml.FullLoader)
-        return self.parser.parse(data)
-
-    def store(self, rule):
-        """
-        Store a rule in a YAML file.
-        """
-        data = rule.to_dict()
-        with open(self.file_path, 'w') as f:
-            yaml.dump(data, f, default_flow_style=False, indent=4, sort_keys=False)
 
 
 class PickledRuleStorage(RuleStorage):
