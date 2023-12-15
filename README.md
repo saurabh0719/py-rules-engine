@@ -19,8 +19,7 @@
 
 - **0 dependencies**: It is written in pure Python, making it easy to install and use without any 3rd-party dependency.
 
-<span id="contents"></span>
-
+<span id="table-of-contents"></span>
 ## Table of Contents :
 * [Installation](#installation)
 * [Rule structure & definition](#basics)
@@ -32,7 +31,6 @@
 
 
 <span id="installation"></span>
-
 ## Installation
 You can install `py-rules-engine` using pip:
 
@@ -44,7 +42,6 @@ pip install py-rules-engine
 
 
 <span id="basics"></span>
-
 ## Rule structure & definition
 
 This rule-engine follows the `IF-THEN-ELSE` pattern.
@@ -58,7 +55,7 @@ The `IF-THEN-ELSE` structure is a fundamental part of the rule engine. It allows
 - `ELSE`: This part specifies the result or action that should be returned or performed if the IF condition is not met (i.e., if it evaluates to False). Like the THEN part, it can be a simple value, a complex object, or another rule. The ELSE part is optional; if it's not provided and the IF condition is not met, the rule engine will return False.
 
 
-Every `Rule` object contains the following
+Every `Rule` object's `dict` representation (rule.to_dict()) contains the following
 
 - `metadata`: This section contains metadata about the rule.
 
@@ -100,8 +97,9 @@ See the `examples/` directory for more.
 <br>
 
 <span id="builder"></span>
+## Rule Components
 
-## Rule Builder
+Rule components can be used to build complex Rules with many conditions. The following components are available -
 
 - `Condition`: This class represents a condition in a rule. It can be initialized with a variable, operator, and value, or with a condition dictionary. It supports logical `and` and `or` operations to combine conditions. The `to_dict` method returns a dictionary representation of the condition.
 
@@ -169,7 +167,6 @@ This will create a rule that checks if the temperature is greater than 30 and re
 
 
 <span id="storage"></span>
-
 ## Rule parsing and storage
 
 
@@ -546,7 +543,6 @@ Here's the equivalent rule in JSON format:
 <br>
 
 <span id="engine"></span>
-
 ## Rule engine and evaluation
 
 The `RuleEngine` class is used to evaluate a parsed rule. It takes a `Rule` object and a context (a dictionary) as input. The context is used to evaluate the conditions in the rule.
@@ -622,7 +618,6 @@ In this example, the first rule checks if the temperature is greater than 30, an
 <br>
 
 <span id="tests"></span>
-
 ## Tests
 
 Install all dev dependencies
@@ -639,7 +634,6 @@ python -m unittest -v
 
 
 <span id="todo"></span>
-
 ## To do
 
 - Pass a global config dictionary from `RuleEngine` to control the following -
