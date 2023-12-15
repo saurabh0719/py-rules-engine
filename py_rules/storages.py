@@ -18,7 +18,7 @@ class RuleStorage(ABC):
 
     def __init__(self, *args, **kwargs) -> None:
         # parser to use for parsing the rule after it is laoded into a 'dict' format
-        self.parser = RuleParser
+        self.parser = RuleParser()
 
     @abstractmethod
     def load(self, *args, **kwargs) -> Rule:
@@ -53,7 +53,7 @@ class JSONRuleStorage(RuleStorage):
         data = {}
         with open(self.file_path) as f:
             data = json.load(f)
-        return self.parser(data).parse()
+        return self.parser.parse(data)
 
     def store(self, rule):
         """
@@ -88,7 +88,7 @@ class YAMLRuleStorage(RuleStorage):
         data = {}
         with open(self.file_path) as f:
             data = yaml.load(f, Loader=yaml.FullLoader)
-        return self.parser(data).parse()
+        return self.parser.parse(data)
 
     def store(self, rule):
         """
@@ -118,7 +118,7 @@ class PickledRuleStorage(RuleStorage):
         data = {}
         with open(self.file_path, 'rb') as f:
             data = pickle.load(f)
-        return self.parser(data).parse()
+        return self.parser.parse(data)
 
     def store(self, rule):
         """

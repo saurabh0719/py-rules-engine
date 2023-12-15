@@ -4,20 +4,21 @@ from .errors import InvalidRuleError
 
 class RuleParser:
     """
-    This RuleParser class is responsible for parsing rules from a dictionary format. It supports parsing of conditions, results, and rules, including complex rules with 'and' and 'or' conditions.
-    - The parse method is the main entry point for parsing a rule. It takes a dictionary representation of a rule and returns a Rule object.
+    The `RuleParser` class is responsible for converting a dictionary representation of a rule into a `Rule` object.
+    It supports parsing of conditions, results, and complex rules with 'and' and 'or' conditions.
 
-    - The parse_value method is used to parse a value from a dictionary representation. It supports parsing of lists and dictionaries, as well as basic data types.
+    Methods:
+    - `parse`: This is the main method for parsing a rule. It takes a dictionary representation of a rule and returns a `Rule` object.
+    - `parse_value`: This method parses a value from a dictionary representation. It supports parsing of lists, dictionaries, and basic data types.
+    - `parse_component`: This method parses a component from a dictionary. It supports parsing of conditions, 'and' conditions, 'or' conditions, results, and rules.
 
-    - The parse_component method is used to parse a component from a dictionary. It supports parsing of conditions, 'and' conditions, 'or' conditions, results, and rules.
+    The `__init__` method initializes the parser with a dictionary representation of a rule and validates the version of the rule to ensure compatibility.
 
-    - The __init__ method initializes the parser with a dictionary representation of a rule. It also validates the version of the rule to ensure compatibility.
-
-    - This class raises an InvalidRuleError if it encounters an unknown component type in the rule.
+    Exceptions:
+    - `InvalidRuleError`: This exception is raised if an unknown component type is encountered in the rule.
     """
 
-    def __init__(self, data: dict):
-        self.data = data
+    def __init__(self):
         self.rule_counter = 0
 
     def _load_attributes_from_metadata(self, obj, metadata: dict):
@@ -32,26 +33,26 @@ class RuleParser:
 
         return obj
 
-    def parse(self) -> Rule:
+    def parse(self, data: dict) -> Rule:
         """
         parse a rule from a dictionary.
         """
-        metadata = self.data.get('metadata', {})
+        metadata = data.get('metadata', {})
         self.rule_counter += 1
         rule = Rule(metadata.get('name', f'Unnamed Rule {self.rule_counter}'))
         if metadata:
             rule = self._load_attributes_from_metadata(rule, metadata)
             rule.load_metadata()
 
-        if self.data.get('if'):
-            rule.If(self.parse_component(self.data.get('if')))
+        if data.get('if'):
+            rule.If(self.parse_component(data.get('if')))
         else:
             raise InvalidRuleError('No If condition in Rule')
 
-        if self.data.get('then'):
-            rule.Then(self.parse_component(self.data.get('then')))
-            if self.data.get('else'):
-                rule.Else(self.parse_component(self.data.get('else')))
+        if data.get('then'):
+            rule.Then(self.parse_component(data.get('then')))
+            if data.get('else'):
+                rule.Else(self.parse_component(data.get('else')))
 
         rule.metadata['required_context_parameters'] = list(rule.required_context_parameters)
         return rule
@@ -106,7 +107,7 @@ class RuleParser:
 
         # start of a new rule
         elif 'if' in data:
-            return self.__class__(data).parse()
+            return self.parse(data)
 
         else:
             raise InvalidRuleError('Unknown component type in rule')
