@@ -6,7 +6,6 @@
 `py-rules-engine` is a robust, Python-based rules engine that enables the creation of intricate logical conditions and actions. Key features include:
 
 - **Complex Logical Conditions**: Define intricate conditions using logical operators.
-
 - **Pythonic Rule Builder**: Utilize a Pythonic interface for easy rule definition.
 - **Flexible Rule Management**: Store, configure, and share rules in JSON/YAML format, with seamless shifting between Python rule builder and other formats.
 - **Nested Rules**: Create multi-level rule structures.
@@ -23,7 +22,7 @@ from py_rules.components import Condition, Result, Rule
 from py_rules.engine import RuleEngine
 
 # Create a condition
-condition = Condition('temperature', '>', 40) & Condition('day_of_week', 'in', [1, 2, 3, 4, 5])
+condition = Condition('temperature', '>=', 40) | Condition('wind_speed', '>', 50)
 
 # Create a result
 result = Result('message', 'str', 'Unfavourable weather conditions for work!')
@@ -32,7 +31,7 @@ result = Result('message', 'str', 'Unfavourable weather conditions for work!')
 rule = Rule('Temperature Rule').If(condition).Then(result)
 
 # initialise a new instance of RuleEngine with context
-context = {'temperature': 40, 'day_of_week': 5}
+context = {'temperature': 40, 'wind_speed': 30}
 engine = RuleEngine(context)
 
 print(engine.evaluate(rule))
