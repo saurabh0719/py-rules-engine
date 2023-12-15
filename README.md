@@ -31,7 +31,7 @@ result = Result('message', 'str', 'Unfavourable weather conditions for work!')
 rule = Rule('Temperature Rule').If(condition).Then(result)
 
 # initialise a new instance of RuleEngine with context
-context = {'temperature': 40, 'wind_speed': 30}
+context = {'temperature': 45, 'wind_speed': 30}
 engine = RuleEngine(context)
 
 print(engine.evaluate(rule))
