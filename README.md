@@ -4,7 +4,14 @@
 </p>
 
 
-`py-rules-engine` is a robust, Python-based rules engine that enables the creation of intricate logical conditions and actions. Key features include:
+`py-rules-engine` is a robust, Python-based rules engine that enables the creation of intricate logical conditions and actions. 
+
+```bash
+pip install py-rules-engine
+```
+
+
+Key features:
 
 - **Complex Logical Conditions**: Define intricate conditions using logical operators.
 - **Pythonic Rule Builder**: Utilize a Pythonic interface for easy rule definition.
