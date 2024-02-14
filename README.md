@@ -1,5 +1,7 @@
-<!-- ![py_rules](https://github.com/saurabh0719/py-rules/assets/42310348/fff20963-e144-44d0-bfde-3b9c7eb0c6ee) -->
-![Screenshot from 2023-12-14 01-53-59](https://github.com/saurabh0719/py-rules/assets/42310348/6c8830a7-0625-4b34-8bec-b4b450db7955)
+
+<p align="center">
+  <img width="500" src="https://github.com/saurabh0719/py-rules-engine/assets/42310348/8e99c0ed-aedb-4fc4-b8b8-9bac6e68fd95">
+</p>
 
 ## Introduction
 
