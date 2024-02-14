@@ -1,9 +1,8 @@
 
 <p align="center">
-  <img width="500" src="https://github.com/saurabh0719/py-rules-engine/assets/42310348/8e99c0ed-aedb-4fc4-b8b8-9bac6e68fd95">
+  <img width="800" src="https://github.com/saurabh0719/object-tracker/assets/42310348/214d1e65-e60e-4fce-ab69-7292d24d9455">
 </p>
 
-## Introduction
 
 `py-rules-engine` is a robust, Python-based rules engine that enables the creation of intricate logical conditions and actions. Key features include:
 
