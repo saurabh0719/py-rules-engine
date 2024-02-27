@@ -60,22 +60,11 @@ class JSONRuleStorage(RuleStorage):
             json.dump(data, f, indent=4)
 
 
-class JSONMultiRuleStorage(RuleStorage):
+class JSONMultiRuleStorage(JSONRuleStorage):
   """
   Multiple RuleStorage class for JSON files.
   """
 
-  format = 'json'
-
-  def __init__(self, file_path):
-      """
-      Initialize the loader with a file_path.
-      """
-      super().__init__()
-      self.file_path = file_path
-      # validate that the file_path is valid and is a json file
-      if not self.file_path.endswith('.json'):
-          raise InvalidRuleError('Invalid file type. Only JSON files are supported.')
 
   def load(self):
       """
@@ -86,13 +75,11 @@ class JSONMultiRuleStorage(RuleStorage):
           data = json.load(f)
       return [self.parser.parse(rule) for rule in data]
 
-  def store(self, rule):
+  def store(self, rules):
       """
-      Store a rule in a JSON file.
+      Store a list of rule in a JSON file.
       """
-      data = rule.to_dict()
-      with open(self.file_path, 'w') as f:
-          json.dump(data, f, indent=4)
+      super().store(rules)
 
 
 class PickledRuleStorage(RuleStorage):
