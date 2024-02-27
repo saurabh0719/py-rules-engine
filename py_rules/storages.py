@@ -73,12 +73,17 @@ class JSONMultiRuleStorage(JSONRuleStorage):
       data = []
       with open(self.file_path) as f:
           data = json.load(f)
+      if not isinstance(data, list):
+        raise TypeError("Invalid data type")
+
       return [self.parser.parse(rule) for rule in data]
 
   def store(self, rules):
       """
       Store a list of rule in a JSON file.
       """
+      if not isinstance(rules, list):
+          raise TypeError("Invalid dat type, expecting a list here")
       super().store(rules)
 
 
