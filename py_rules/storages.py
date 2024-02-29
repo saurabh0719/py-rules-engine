@@ -83,7 +83,7 @@ class JSONMultiRuleStorage(JSONRuleStorage):
       Store a list of rule in a JSON file.
       """
       if not isinstance(rules, list):
-          raise TypeError("Invalid dat type, expecting a list here")
+          raise TypeError("Invalid data type, expecting a list here")
       super().store(rules)
 
 
